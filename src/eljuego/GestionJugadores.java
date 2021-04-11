@@ -118,11 +118,11 @@ public class GestionJugadores extends Partida {
         boolean newUsuario = true;
         try{
             
-            /* Se llena dos arrayList, uno con los nombres que comparará con el posible nuevo nombre
-            y otro con todos los datos para volver a escribir el archivo despues*/
+            
             File lectura1 = new File ("src/eljuego/Jugadores.txt");
             Scanner archivoLeo = new Scanner(lectura1);
-            
+            /* Se llena dos arrayList, uno con los nombres que comparará con el posible nuevo nombre
+            y otro con todos los datos para volver a escribir el archivo despues*/
             while (archivoLeo.hasNext()){
                 linea = archivoLeo.nextLine();
                 String[] parts =linea.split(" ");
@@ -195,8 +195,12 @@ public class GestionJugadores extends Partida {
     
     public void comprobarJugadorHistorial (String usuario) throws FileNotFoundException{
         String nombre;
-        boolean jugadorExiste = false;
-        ArrayList<String> nombres = new ArrayList<>();
+        String nombreArchivo;
+        String linea;
+        boolean jugadorExiste = false;        
+        Scanner teclado = new Scanner (System.in);
+        ArrayList<String> arrayNombres = new ArrayList<>();
+        ArrayList<String> escribeTodo = new ArrayList<>();
         this.jugadores = new ArrayList<>();
         this.jugadoresPartida = new ArrayList<>();
         
@@ -205,23 +209,26 @@ public class GestionJugadores extends Partida {
             Scanner archivoLeo = new Scanner(lectura1);
             usuario = usuario.toLowerCase();
             usuario =  usuario.toUpperCase().charAt(0) + usuario.substring(1, usuario.length()).toLowerCase();
-            
+            /* Se llena dos arrayList, uno con los nombres que comparará con el posible nuevo nombre
+            y otro con todos los datos para volver a escribir el archivo despues*/
             while (archivoLeo.hasNext()){
-                String[] parts = archivoLeo.nextLine().split(" ");
-                nombre = parts[0].toLowerCase();
-                nombre =  nombre.toUpperCase().charAt(0) + nombre.substring(1, nombre.length()).toLowerCase();
-                nombres.add(nombre);
+                linea = archivoLeo.nextLine();
+                String[] parts =linea.split(" ");
+                escribeTodo.add(linea);
+                nombreArchivo = parts[0].toLowerCase();
+                nombreArchivo =  nombreArchivo.toUpperCase().charAt(0) + nombreArchivo.substring(1, nombreArchivo.length()).toLowerCase();
+                arrayNombres.add(nombreArchivo);
             }
             archivoLeo.close();
-            if(nombres.isEmpty()){
-                System.out.println("Este nombre de usuario no existe ----111111111----> Usuario " + usuario + " creado y listo para jugar");
+            if(arrayNombres.isEmpty()){
+                System.out.println("Este nombre de usuario no existe --------> Usuario " + usuario + " creado y listo para jugar");
                 Jugadores nuevo = new Jugadores (usuario);
                 this.jugadores.add(nuevo);
                 this.jugadoresPartida.add(nuevo);
                 jugadorExiste = true;
             }else{
                 
-                for (String i : nombres){ // Se comprueba si el  nombre  esta ya en el arraList
+                for (String i : arrayNombres){ // Se comprueba si el  nombre  esta ya en el arraList
                     if (usuario.equals(i)){
                         System.out.println( usuario + " listo para jugar!!");
                         Jugadores nuevo = new Jugadores (usuario);

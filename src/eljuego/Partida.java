@@ -19,6 +19,8 @@ public class Partida {
     private int nJugadores;
     private int nRondas;
     private ArrayList Jugadores;
+
+   
     
     public Partida (){
         
@@ -44,6 +46,13 @@ public class Partida {
 
     public void setnRondas(int nRondas) {
         this.nRondas = nRondas;
+    }
+     public ArrayList getJugadores() {
+        return Jugadores;
+    }
+
+    public void setJugadores(ArrayList Jugadores) {
+        this.Jugadores = Jugadores;
     }
     
     
@@ -91,7 +100,22 @@ public class Partida {
                     throw new MiExcepcion(14);
                 }else{
                     nuevaPartida.setnRondas(opcion);
-                    System.out.println("Has elegido " + nuevaPartida.getnRondas());
+                    String partidas = "";
+                    switch (opcion){
+                        case 1:
+                            partidas = " rapida de 3 rondas";
+                            break;
+                        case 2:
+                            partidas = " corta de 5 rondas";
+                            break;
+                        case 3:
+                            partidas = " normal de 10 rondas";
+                            break;
+                        case 4:
+                            partidas = " larga de 20 rondas";
+                            break;
+                    }                    
+                    System.out.println("Has elegido una partida " + partidas);
                     continua = false;
                 }
             }catch (InputMismatchException e ){
@@ -104,75 +128,78 @@ public class Partida {
             
         }while (continua);
         
-        PedirJugadores(nuevaPartida.getnJugadores());
-        //opcion = ElJuego.aleatorio(2,3);
-        /*do{
-        
-        System.out.println("Seleccione un número del siguiente menu:\n");
-        System.out.println( "1. Ver jugadores \n2. Añadir jugador \n3. Eliminar jugador \n4. Volver " );
-        
-        try{
-        continua = false;
-        teclado = new Scanner (System.in);
-        opcion = teclado.nextInt();
-        switch(opcion) {
-        case 1:
-        //verJugadores();
-        continua = true;
-        break;
-        case 2:
-        //nuevoJugador();
-        continua = true;
-        break;
-        case 3:
-        // code block
-        break;
-        case 4:
-        continua = false;
-        break;
-        default:
-        System.out.println("Valor no valido, por favor introduzca una opción valida (entre 1 y 4)");
-        continua = true;
-        
-        }
-        
-        }catch (InputMismatchException e ){
-        System.out.println("Valor no valido, por favor introduzca una opción valida (entre 1 y 5)");
-        continua = true;
-        } catch (IOException ex){
-        System.out.println("Error: "+ ex);
-        continua = true;
-        }
-        
-        
-        }while (continua);
-        */
+        pedirJugadores(nuevaPartida.getnJugadores());
+       
     }
     
-    public void PedirJugadores (int numJugadores)throws IOException{
+    public ArrayList pedirJugadores (int numJugadores)throws IOException{
         
-        ArrayList <Jugadores> partida = new ArrayList ();
+        ArrayList <Jugadores> JugadoresPartida = new ArrayList ();
+        ArrayList <String> PosiblesJugadores = new ArrayList ();
         int opcion; 
-        String nombre = "";        
-        boolean continua;
+        String nombreJugador = "";
+        //String nombreJugadorPartida = "";
+        boolean continua, jugadorOK;
         Scanner teclado = new Scanner (System.in);
         
-        System.out.println("Selecciona a los jugadores:");
-        
+        if (numJugadores == 1){
+            do{
+                System.out.println("\nSeleciona:\n1. Jugador existente\n2. Jugador nuevo\n3. Juega contra el Ordenador (CPU)");                
+                try{
+                    continua = false;                    
+                    opcion = teclado.nextInt();
+                    switch(opcion) {
+                        case 1:
+                            GestionJugadores gestion1 = new GestionJugadores ();
+                            System.out.println("Con que usuario quieres jugar?");
+                            nombreJugador = teclado.next();
+                            if (PosiblesJugadores.isEmpty()){
+                                PosiblesJugadores.add(nombreJugador);
+                                Jugadores nuevo = new Jugadores (nombreJugador);
+                                JugadoresPartida.add(nuevo);                                
+                            }
+                            continua = false; 
+                            break;
+                        case 2:
+                            GestionJugadores gestion2 = new GestionJugadores ();
+                            nombreJugador = gestion2.nuevoJugador();
+                            if (PosiblesJugadores.isEmpty()){
+                                PosiblesJugadores.add(nombreJugador);
+                                Jugadores nuevo = new Jugadores (nombreJugador);
+                                JugadoresPartida.add(nuevo);                                
+                            }  
+                            continua = false;                            
+                            break;
+                        case 3:
+                            break;
+                        default:
+                            System.out.println("Valor no valido, por favor introduzca una opción valida (entre 1 y 3)");
+                            continua = true;
+                    }                    
+                    
+                }catch (InputMismatchException e ){
+                    System.out.println("Valor no valido, por favor introduzca una opción valida (entre 1 y 3)");
+                    continua = true;
+                } catch (IOException ex){
+                    System.out.println("Error: "+ ex);
+                    continua = true;
+                }
+                }while (continua == true);            
+        }else if (numJugadores > 1){
+                
         
         while (numJugadores > 0){
             do{
-                System.out.println("\n1. Jugador existente\n2. Jugador nuevo\n3. Juega contra el Ordenador (CPU)");
-                
+                System.out.println("Selecciona a los jugadores:");
+                System.out.println("\n1. Jugador existente\n2. Jugador nuevo\n3. Juega contra el Ordenador (CPU)");                
                 try{
-                    continua = false;
-                    teclado = new Scanner (System.in);
+                    continua = false;                    
                     opcion = teclado.nextInt();
                     switch(opcion) {
                         case 1:
                             GestionJugadores gestion1 = new GestionJugadores ();
                             System.out.println("Que usuario vas a utilizar?");
-                            nombre = teclado.next();
+                            nombreJugador = teclado.next();
                             //gestion1.comprobarJugadorHistorial(nombre);
                             if (numJugadores > 1){
                                 System.out.println("Selecciona el siguiente Jugador / Ordenador");
@@ -184,30 +211,30 @@ public class Partida {
                             break;
                         case 2:
                             GestionJugadores gestion2 = new GestionJugadores ();
-                            gestion2.nuevoJugador();
-                            //gestion2.comprobarJugadorHistorial(nombre);
-                            if (numJugadores > 1){
-                                System.out.println("Selecciona el siguiente Jugador / Ordenador");
-                                continua = false;
-                            }else if (numJugadores ==1 ){
-                                System.out.println("Selecciona al ultimo jugador");
-                                continua = false;
-                                
-                            }else if (numJugadores == 0 ){
-                                System.out.println("A jugaaaaaaaaaar");
-                                continua = false;
+                            nombreJugador = gestion2.nuevoJugador();
+                            jugadorOK = comprobarJugadores(nombreJugador, PosiblesJugadores, JugadoresPartida);
+                            if (jugadorOK == false){
+                                continua = true;
+                                break;
+                            }else{
+                                if (numJugadores > 1){
+                                    System.out.println("Selecciona el siguiente Jugador / Ordenador");
+                                }else if (numJugadores ==2 ){
+                                    System.out.println("Selecciona al ultimo jugador");
+                                }
                             }
+                            continua = false;
                             break;
                         case 3:
                             break;
                         default:
-                            System.out.println("Valor no valido, por favor introduzca una opción valida (entre 1 y 4)");
+                            System.out.println("Valor no valido, por favor introduzca una opción valida (entre 1 y 3)");
                             continua = true;
                     }
                     
                     
                 }catch (InputMismatchException e ){
-                    System.out.println("Valor no valido, por favor introduzca una opción valida (entre 1 y 5)");
+                    System.out.println("Valor no valido, por favor introduzca una opción valida (entre 1 y 3)");
                     continua = true;
                 } catch (IOException ex){
                     System.out.println("Error: "+ ex);
@@ -218,13 +245,34 @@ public class Partida {
                 numJugadores--;
                 
             }
+        }
+        System.out.println("A jugaaaaaaaaaar");
+        return JugadoresPartida;
     }
+    
+    public boolean comprobarJugadores (String nombre, ArrayList PosiblesJugadores, ArrayList JugadoresPartida){
+        boolean continua = true;
+        if (PosiblesJugadores.contains(nombre)){
+            continua = false;
+            System.out.println("Este jugador ya ha sido elejido para jugar, prueba con otro");
+        }else{
+            PosiblesJugadores.add (nombre);
+            Jugadores nuevo = new Jugadores (nombre);
+            JugadoresPartida.add(nuevo);
+            System.out.println( nombre + " listo para jugar");
+            continua = true;
+        }
+        
+        return continua;
+    }
+    
 }
         
+ 
+   
         
         
-        
-        
+ 
     
     
 
