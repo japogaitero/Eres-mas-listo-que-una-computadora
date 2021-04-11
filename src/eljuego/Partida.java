@@ -18,7 +18,8 @@ import java.util.Scanner;
 public class Partida {
     private int nJugadores;
     private int nRondas;
-    private ArrayList Jugadores;
+    private ArrayList <Jugadores> JugadoresPartida;
+    private ArrayList <String> PosiblesJugadores = new ArrayList ();
 
    
     
@@ -26,39 +27,48 @@ public class Partida {
         
     }
     
-    public Partida(int nJugadores, int nRondas, ArrayList Jugadores) {
+    public Partida(int nJugadores, int nRondas, ArrayList JugadoresPartida) {
         this.nJugadores = nJugadores;
         this.nRondas = nRondas;
-        this.Jugadores = new ArrayList<>();
+        this.JugadoresPartida = new ArrayList<>();
     }
 
     public int getnJugadores() {
         return nJugadores;
     }
-
+    
     public void setnJugadores(int nJugadores) {
         this.nJugadores = nJugadores;
     }
-
+    
     public int getnRondas() {
         return nRondas;
     }
-
+    
     public void setnRondas(int nRondas) {
         this.nRondas = nRondas;
     }
-     public ArrayList getJugadores() {
-        return Jugadores;
+    
+    public ArrayList<Jugadores> getJugadoresPartida() {
+        return JugadoresPartida;
     }
 
-    public void setJugadores(ArrayList Jugadores) {
-        this.Jugadores = Jugadores;
+    public void setJugadoresPartida(ArrayList<Jugadores> JugadoresPartida) {
+        this.JugadoresPartida = JugadoresPartida;
+    }
+
+    public ArrayList<String> getPosiblesJugadores() {
+        return PosiblesJugadores;
+    }
+
+    public void setPosiblesJugadores(ArrayList<String> PosiblesJugadores) {
+        this.PosiblesJugadores = PosiblesJugadores;
     }
     
     
     
-    public void menu()throws Exception, IOException{
-        //ArrayList<String> arrayNombres = new ArrayList<String>();
+    
+    public void menu()throws Exception, IOException{        
         Partida nuevaPartida = new Partida();
         int opcion;
         boolean continua;
@@ -128,8 +138,13 @@ public class Partida {
             
         }while (continua);
         
-        pedirJugadores(nuevaPartida.getnJugadores());
-       
+        JugadoresPartida = pedirJugadores(nuevaPartida.getnJugadores());
+        System.out.println("\nY los jugadores para esta partida son:");
+        for (Jugadores i : JugadoresPartida){
+            System.out.println(i.toString());
+            
+        }
+        
     }
     
     public ArrayList pedirJugadores (int numJugadores)throws IOException{
@@ -150,14 +165,18 @@ public class Partida {
                     opcion = teclado.nextInt();
                     switch(opcion) {
                         case 1:
-                            GestionJugadores gestion1 = new GestionJugadores ();
-                            System.out.println("Con que usuario quieres jugar?");
-                            nombreJugador = teclado.next();
-                            if (PosiblesJugadores.isEmpty()){
+                            GestionJugadores gestion1 = new GestionJugadores ();                            
+                            nombreJugador = teclado.next();  
+                            nombreJugador = gestion1.jugadorExistente(); 
+                            if (nombreJugador.isEmpty()){
+                                continua = true;
+                                break;
+                            }else if (PosiblesJugadores.isEmpty()){
                                 PosiblesJugadores.add(nombreJugador);
                                 Jugadores nuevo = new Jugadores (nombreJugador);
                                 JugadoresPartida.add(nuevo);                                
                             }
+                            
                             continua = false; 
                             break;
                         case 2:
@@ -189,25 +208,34 @@ public class Partida {
                 
         
         while (numJugadores > 0){
+            //System.out.println("Selecciona a los jugadores:");
             do{
-                System.out.println("Selecciona a los jugadores:");
+                
                 System.out.println("\n1. Jugador existente\n2. Jugador nuevo\n3. Juega contra el Ordenador (CPU)");                
                 try{
                     continua = false;                    
                     opcion = teclado.nextInt();
                     switch(opcion) {
                         case 1:
-                            GestionJugadores gestion1 = new GestionJugadores ();
-                            System.out.println("Que usuario vas a utilizar?");
-                            nombreJugador = teclado.next();
-                            //gestion1.comprobarJugadorHistorial(nombre);
-                            if (numJugadores > 1){
-                                System.out.println("Selecciona el siguiente Jugador / Ordenador");
-                                continua = false;
-                            }else if (numJugadores ==1 ){
-                                System.out.println("Selecciona al ultimo jugador");
-                                continua = false;                                
+                            GestionJugadores gestion1 = new GestionJugadores ();                            
+                            nombreJugador = gestion1.jugadorExistente();
+                            if (nombreJugador.isEmpty()){
+                                continua = true;
+                                break;
+                            }else{
+                            jugadorOK = comprobarJugadores(nombreJugador, PosiblesJugadores, JugadoresPartida);
+                            if (jugadorOK == false){
+                                continua = true;
+                                break;
+                            }else{
+                                if (numJugadores > 1){
+                                    System.out.println("Selecciona el siguiente Jugador / Ordenador");
+                                }else if (numJugadores ==2 ){
+                                    System.out.println("Selecciona al ultimo jugador");
+                                }
                             }
+                            }
+                            continua = false;
                             break;
                         case 2:
                             GestionJugadores gestion2 = new GestionJugadores ();

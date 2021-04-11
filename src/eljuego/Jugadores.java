@@ -25,6 +25,12 @@ public class Jugadores extends GestionJugadores{
         
         
     }
+
+    @Override
+    public String toString() {
+        return "Jugadores{" + "nombre=" + nombre + '}';
+    }
+    
     
     
     
