@@ -32,7 +32,7 @@ public class ElJuego {
         do{
             
             System.out.println("Seleccione un número del siguiente menu:\n");
-            System.out.println( "1. Juegar Partida \n2. Ver Ranking \n3. Ver Historico \n4. Menu Jugadores \n5. Salir del juego ");
+            System.out.println( "1. Jugar partida \n2. Ver ránking \n3. Ver histórico \n4. Menú jugadores \n5. Salir del juego ");
             
             try{
                 continua = false;
@@ -60,13 +60,13 @@ public class ElJuego {
                         continua = false;
                         break;
                     default:
-                        System.out.println("Valor no valido, por favor introduzca una opción valida (entre 1 y 5)");
+                        System.out.println("Valor no válido, por favor introduzca una opción válida (entre 1 y 5)");
                         continua = true;
                         
                 }
                 
             }catch (InputMismatchException e ){
-                System.out.println("Valor no valido, por favor introduzca una opción valida (entre 1 y 5)");
+                System.out.println("Valor no válido, por favor introduzca una opción válida (entre 1 y 5)");
                 
                 continua = true;
             }
@@ -82,7 +82,7 @@ public class ElJuego {
     public static int aleatorio (int a, int b){  // devuelve un valor aleatorio entre a y b ambos incluidos
         
         Random r = new Random();
-        int aleatorio = r.nextInt(b+1)+a;
+        int aleatorio = r.nextInt(b)+a;
         
         return aleatorio;
     }

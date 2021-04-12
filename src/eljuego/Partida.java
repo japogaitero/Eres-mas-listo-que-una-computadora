@@ -8,8 +8,10 @@ package eljuego;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import javax.script.ScriptException;
 
 /**
  *
@@ -76,31 +78,35 @@ public class Partida {
         
         
         do {
-            System.out.println("Elije cuantos usuarios van a jugar. 1 minimo o 4 como máximo");
+            System.out.println("Elije cuántos usuarios van a jugar. 1 mínimo o 4 como máximo");
             try{
                 continua = false;
                 teclado = new Scanner (System.in);
                 opcion = teclado.nextInt();
                 if (opcion <= 0 || opcion > 4 ){
                     throw new MiExcepcion(14);
-                }else{                    
+                }else if (opcion == 1){
+                    nuevaPartida.setnJugadores(opcion);
+                    System.out.println("Has elejido jugar tu solo");
+                    continua = false;
+                }else{                   
                     nuevaPartida.setnJugadores(opcion);
                     System.out.println("Has elegido una partida de " + nuevaPartida.getnJugadores() + " jugadores");
                     continua = false;
                 }
                 
             }catch (InputMismatchException e ){
-                System.out.println("Valor no valido, por favor introduzca un número de jugadores entre 1 y 4");
+                System.out.println("Valor no válido, por favor introduzca un número de jugadores entre 1 y 4");
                 continua = true;
             }catch (MiExcepcion ex){
                 System.out.println(ex.getMessage());
                 continua = true;
-                teclado.nextInt();
+                
             }
         }while (continua);
         
         do {
-            System.out.println("Elije que tipo de partida quieres jugar\n1. Partida rápida (3 rondas)\n2. Partida corta (5 rondas)\n"
+            System.out.println("Elije qué tipo de partida quieres jugar\n1. Partida rápida (3 rondas)\n2. Partida corta (5 rondas)\n"
                     + "3. Partida normal (10 rondas)\n4. Partida larga (20 rondas)");
             try{
                 continua = false;
@@ -108,31 +114,34 @@ public class Partida {
                 opcion = teclado.nextInt();
                 if (opcion <= 0 || opcion > 4 ){
                     throw new MiExcepcion(14);
-                }else{
-                    nuevaPartida.setnRondas(opcion);
+                }else{                    
                     String partidas = "";
                     switch (opcion){
                         case 1:
+                            nuevaPartida.setnRondas(3);
                             partidas = " rapida de 3 rondas";
                             break;
                         case 2:
+                            nuevaPartida.setnRondas(5);
                             partidas = " corta de 5 rondas";
                             break;
                         case 3:
+                            nuevaPartida.setnRondas(10);
                             partidas = " normal de 10 rondas";
                             break;
                         case 4:
+                            nuevaPartida.setnRondas(20);
                             partidas = " larga de 20 rondas";
                             break;
                     }                    
-                    System.out.println("Has elegido una partida " + partidas);
+                    System.out.println("Has elegido una partida" + partidas);
                     continua = false;
                 }
             }catch (InputMismatchException e ){
-                System.out.println("Valor no valido, por favor introduzca un número de jugadores entre 1 y 4");
+                System.out.println("Valor no válido, por favor introduzca un número de jugadores entre 1 y 4");
                 continua = true;
             }catch (MiExcepcion ex){
-                System.out.println(ex.getMessage());
+                System.out.println(ex.getMessage());                
                 continua = true;
             }
             
@@ -141,13 +150,22 @@ public class Partida {
         JugadoresPartida = pedirJugadores(nuevaPartida.getnJugadores());
         System.out.println("\nY los jugadores para esta partida son:");
         for (Jugadores i : JugadoresPartida){
-            System.out.println(i.toString());
-            
+            System.out.print(i.getNombre());
+            System.out.println("\t");            
         }
+        System.out.println("Vamos a decidir aleatoriamente el orden de los jugadores...");
+        
+        Collections.shuffle(JugadoresPartida);
+        System.out.println("\nEl orden de los jugadores para responder es:");
+        for (Jugadores i : JugadoresPartida){
+            System.out.print(i.getNombre());
+            System.out.println("\t");            
+        }
+        jugandoPartida(JugadoresPartida, nuevaPartida.getnRondas());
         
     }
     
-    public ArrayList pedirJugadores (int numJugadores)throws IOException{
+    public ArrayList pedirJugadores (int numJugadores)throws IOException, MiExcepcion{
         
         ArrayList <Jugadores> JugadoresPartida = new ArrayList ();
         ArrayList <String> PosiblesJugadores = new ArrayList ();
@@ -159,14 +177,13 @@ public class Partida {
         
         if (numJugadores == 1){
             do{
-                System.out.println("\nSeleciona:\n1. Jugador existente\n2. Jugador nuevo\n3. Juega contra el Ordenador (CPU)");                
+                System.out.println("\nSeleciona:\n1. Jugador existente\n2. Jugador nuevo\n");                
                 try{
                     continua = false;                    
                     opcion = teclado.nextInt();
                     switch(opcion) {
                         case 1:
-                            GestionJugadores gestion1 = new GestionJugadores ();                            
-                            nombreJugador = teclado.next();  
+                            GestionJugadores gestion1 = new GestionJugadores ();
                             nombreJugador = gestion1.jugadorExistente(); 
                             if (nombreJugador.isEmpty()){
                                 continua = true;
@@ -175,8 +192,7 @@ public class Partida {
                                 PosiblesJugadores.add(nombreJugador);
                                 Jugadores nuevo = new Jugadores (nombreJugador);
                                 JugadoresPartida.add(nuevo);                                
-                            }
-                            
+                            }                            
                             continua = false; 
                             break;
                         case 2:
@@ -189,15 +205,14 @@ public class Partida {
                             }  
                             continua = false;                            
                             break;
-                        case 3:
-                            break;
+                        
                         default:
-                            System.out.println("Valor no valido, por favor introduzca una opción valida (entre 1 y 3)");
+                            System.out.println("Valor no valido, por favor selecciones :");
                             continua = true;
                     }                    
                     
                 }catch (InputMismatchException e ){
-                    System.out.println("Valor no valido, por favor introduzca una opción valida (entre 1 y 3)");
+                    System.out.println("Valor no válido, por favor introduzca una opción válida (entre 1 y 3)");
                     continua = true;
                 } catch (IOException ex){
                     System.out.println("Error: "+ ex);
@@ -211,7 +226,7 @@ public class Partida {
             //System.out.println("Selecciona a los jugadores:");
             do{
                 
-                System.out.println("\n1. Jugador existente\n2. Jugador nuevo\n3. Juega contra el Ordenador (CPU)");                
+                System.out.println("\n1. Jugador existente\n2. Jugador nuevo\n3. Juega contra el ordenador (CPU)");                
                 try{
                     continua = false;                    
                     opcion = teclado.nextInt();
@@ -254,9 +269,23 @@ public class Partida {
                             continua = false;
                             break;
                         case 3:
+                            GestionJugadores gestion3 = new GestionJugadores ();
+                            nombreJugador = gestion3.nuevoCPU();
+                            jugadorOK = comprobarJugadores(nombreJugador, PosiblesJugadores, JugadoresPartida);
+                            if (jugadorOK == false){
+                                continua = true;
+                                break;
+                            }else{
+                                if (numJugadores > 1){
+                                    System.out.println("Selecciona el siguiente Jugador / Ordenador");
+                                }else if (numJugadores ==2 ){
+                                    System.out.println("Selecciona al ultimo jugador");
+                                }
+                            }
+                            continua = false;
                             break;
                         default:
-                            System.out.println("Valor no valido, por favor introduzca una opción valida (entre 1 y 3)");
+                            System.out.println("Valor no válido, por favor introduzca una opción válida (entre 1 y 3)");
                             continua = true;
                     }
                     
@@ -267,7 +296,11 @@ public class Partida {
                 } catch (IOException ex){
                     System.out.println("Error: "+ ex);
                     continua = true;
-                }
+                }/*catch (MiExcepcion ex){
+                System.out.println(ex.getMessage());
+                continua = true;
+                    
+                }*/
                 }while (continua == true);
                 
                 numJugadores--;
@@ -294,6 +327,37 @@ public class Partida {
         return continua;
     }
     
+    public ArrayList jugadoresDesordenados (ArrayList JugadoresPartida){
+        
+        
+        
+        return JugadoresPartida;
+    }
+    
+    public ArrayList jugandoPartida (ArrayList <Jugadores> JugadoresPartida, int rondas) throws ScriptException{
+        
+        int ronda = 1;
+                
+        while(rondas >0){
+            
+            for (Jugadores i : JugadoresPartida){
+                System.out.println("Le toca contestar una pregunta de a " + i.getNombre());
+                Preguntas pregunta = new Preguntas();
+                
+            }
+            
+            
+            
+            
+            
+            System.out.println("partida " + ronda);
+            ronda++;
+            rondas--;
+        }
+        
+        
+        return JugadoresPartida;
+    }
 }
         
  

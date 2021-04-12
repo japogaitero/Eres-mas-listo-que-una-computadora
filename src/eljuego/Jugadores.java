@@ -26,6 +26,38 @@ public class Jugadores extends GestionJugadores{
         
     }
 
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public int getPuntosPartida() {
+        return puntosPartida;
+    }
+
+    public void setPuntosPartida(int puntosPartida) {
+        this.puntosPartida = puntosPartida;
+    }
+
+    public int getPuntosTotal() {
+        return puntosTotal;
+    }
+
+    public void setPuntosTotal(int puntosTotal) {
+        this.puntosTotal = puntosTotal;
+    }
+
+    public boolean isHumano() {
+        return humano;
+    }
+
+    public void setHumano(boolean humano) {
+        this.humano = humano;
+    }
+
     @Override
     public String toString() {
         return "Jugadores{" + "nombre=" + nombre + '}';

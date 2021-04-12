@@ -29,7 +29,7 @@ public class MiExcepcion extends Exception{
                 mensaje="Error, debes escoger una opcion entre 1 y 4";
                 break;
             case 222:
-                mensaje="Error, el numero esta entre 11 y 20";
+                mensaje="No se permiten nombres con espacio. Por favor introduce un nombre sin espacios";
                 break;
             case 333:
                 mensaje="Error, el numero esta entre 21 y 30";
