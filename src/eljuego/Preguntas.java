@@ -11,6 +11,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
+import java.util.Random;
 import java.util.Scanner;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -24,22 +25,32 @@ public class Preguntas {
     //private HashMap<String, String> preguntaRespuesta = new HashMap<>();
     //private ArrayList <HashMap> preguntas = new ArrayList ();
     
-    public Preguntas() throws ScriptException {
-        
-        
-    ArrayList <String> respuestas = new ArrayList ();
     
-    respuestas.add(adivinaPalabra());
-    respuestas.add(respuestaMates());
-    respuestas.add(preguntaIngles());
-    
-        System.out.println("------------");
-    
-    for (String i : respuestas){
-        System.out.print(i + "\t\t");
-        
+    public Preguntas() {
     }
-    
+
+    public String preguntasAleatorias() throws ScriptException {
+        int random;
+        String respuesta = "";
+        random = ElJuego.aleatorio(1,3);        
+        /*este metodo selecciona de manera aleatoria una pregunta y asigna su corresponiendte respuesta
+        
+        */
+        switch(random) {
+            case 1:
+                respuesta = adivinaPalabra();
+                break;
+            case 2:
+                respuesta = respuestaMates();
+                break;
+            case 3:
+                respuesta = preguntaIngles();
+                break;               
+        }
+        
+        System.out.println("Y la respuesta es " + respuesta);
+       
+        return respuesta;
     }
     
     public static String adivinaPalabra () throws ScriptException{
@@ -49,7 +60,7 @@ public class Preguntas {
         System.out.println("Adivine la letras que faltan");
         try {
             
-            File f = new File ("src/pruebas/diccionario.txt");
+            File f = new File ("src/eljuego/diccionario.txt");
             Scanner diccionario = new Scanner (f);
             palabra = diccionario.next();
             
@@ -83,11 +94,11 @@ public class Preguntas {
                     continua = false;
                     //System.out.println("esta repetido");
                     posicion = (int) Math.floor(Math.random()*(palabra.length()));
-                    //posiciones.remove(posiciones.size()-1);                   
+                    //posiciones.remove(posiciones.size()-1);
                 }
                 if (continua == true){
                     posiciones.add(posicion);
-                    arrayTemp[posicion] = '*';                    
+                    arrayTemp[posicion] = '*';
                     asteriscos--;
                 }
             }
@@ -169,12 +180,13 @@ public class Preguntas {
         HashMap<String [], String> preguntaRespuesta = new HashMap<>();
         int index;
         String temp;
+        char opc = 'A';
         
         try {
             Scanner teclado = new Scanner(System.in);
             int x = (int) (Math.random()*4);
             
-            File f = new File ("src/pruebas2222/ingles.txt");
+            File f = new File ("src/eljuego/ingles.txt");
             Scanner ingles = new Scanner (f);
             
             while(ingles.hasNext() ){    // rellena el Array pregunta y lo intoduce en el ArrayList preguntas
@@ -194,7 +206,7 @@ public class Preguntas {
             pregunta = preguntas.get(y); // pregunta
             respuesta = pregunta[1];
             for (String i : pregunta ){
-                //System.out.println(i);
+                System.out.println(i);
             }
             //System.out.println("-----------------");
             
@@ -205,17 +217,17 @@ public class Preguntas {
                 temp = pregunta[index];
                 pregunta[index] = pregunta[i];
                 pregunta[i] = temp;
-            }            
+            }
             
             for (String i : pregunta ){
                 //System.out.println(i);
             }
             //System.out.println("-----------------");
             
-            char opc = 'A';
-            for (int i = 1 ; i < pregunta.length - 1; i++){
-            //for (String i : pregunta ){
-                System.out.println(opc + " - " + i);
+            
+            for (int i = 1 ; i < pregunta.length ; i++){
+                //for (String i : pregunta ){
+                System.out.println(opc + " - " + pregunta[i]);
                 opc++;
             }
             
@@ -229,4 +241,3 @@ public class Preguntas {
         return respuesta;
     }
 }
-

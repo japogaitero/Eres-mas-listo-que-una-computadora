@@ -6,6 +6,7 @@
 
 package eljuego;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -334,18 +335,34 @@ public class Partida {
         return JugadoresPartida;
     }
     
-    public ArrayList jugandoPartida (ArrayList <Jugadores> JugadoresPartida, int rondas) throws ScriptException{
+    public ArrayList jugandoPartida (ArrayList <Jugadores> JugadoresPartida, int rondas) throws ScriptException, IOException{
         
         int ronda = 1;
-                
+        String posibleRespuesta;
+        String respuestaCorrecta;
+        String expresion="^Cpu\\d*$";
+        
         while(rondas >0){
             
             for (Jugadores i : JugadoresPartida){
                 System.out.println("Le toca contestar una pregunta de a " + i.getNombre());
-                Preguntas pregunta = new Preguntas();
+                Preguntas nuevaPregunta = new Preguntas();
+                respuestaCorrecta = nuevaPregunta.preguntasAleatorias();
+                if (i.getNombre().matches(expresion)){
+                    System.out.println("oh va a jugar la " + i.getNombre());
+                }
                 
+                Scanner teclado = new Scanner (System.in);
+                posibleRespuesta = teclado.nextLine();
+                if (posibleRespuesta.equals(respuestaCorrecta)){
+                    System.out.println("Muy bien has acertado la pregunta!!!!!");
+                    i.setPuntosPartida(i.getPuntosPartida()+1);
+                    i.setPuntosTotal(i.getPuntosTotal()+1);
+                }else{
+                    System.out.println("Ohhhh noooo esa no era la respuesta correcta");
+                }
+                    
             }
-            
             
             
             
