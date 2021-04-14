@@ -6,7 +6,9 @@
 
 package eljuego;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -337,41 +339,79 @@ public class Partida {
     
     public ArrayList jugandoPartida (ArrayList <Jugadores> JugadoresPartida, int rondas) throws ScriptException, IOException{
         
-        int ronda = 1;
-        String posibleRespuesta;
-        String respuestaCorrecta;
+        int nRonda = 1;
+        int partida = 1;
+        String linea;
         String expresion="^Cpu\\d*$";
+        String posibleRespuesta;
+        String resultadoPartida = "";
+        boolean respuestaCorrecta = false;
+        ArrayList<String> escribeTodo = new ArrayList<>();
         
-        while(rondas >0){
-            
-            for (Jugadores i : JugadoresPartida){
-                System.out.println("Le toca contestar una pregunta de a " + i.getNombre());
-                Preguntas nuevaPregunta = new Preguntas();
-                respuestaCorrecta = nuevaPregunta.preguntasAleatorias();
-                if (i.getNombre().matches(expresion)){
-                    System.out.println("oh va a jugar la " + i.getNombre());
-                }
-                
-                Scanner teclado = new Scanner (System.in);
-                posibleRespuesta = teclado.nextLine();
-                if (posibleRespuesta.equals(respuestaCorrecta)){
-                    System.out.println("Muy bien has acertado la pregunta!!!!!");
-                    i.setPuntosPartida(i.getPuntosPartida()+1);
-                    i.setPuntosTotal(i.getPuntosTotal()+1);
-                }else{
-                    System.out.println("Ohhhh noooo esa no era la respuesta correcta");
-                }
-                    
-            }
-            
-            
-            
-            
-            System.out.println("partida " + ronda);
-            ronda++;
-            rondas--;
+        File historico = new File ("src/eljuego/Historico.txt");
+        
+        for (Jugadores i : JugadoresPartida){//se resetea los puntos iniciales para la partida nueva de todos los jugadores
+            i.setPuntosPartida(0);
         }
         
+        while(rondas > 0){
+            System.out.println("\nRonda: " + nRonda);
+            for (Jugadores i : JugadoresPartida){
+                System.out.println("Turno de: " + i.getNombre());
+                Preguntas nuevaPregunta = new Preguntas();
+                
+                if (i.getNombre().matches(expresion)){
+                    System.out.println("oh va a jugar la " + i.getNombre());
+                    respuestaCorrecta = nuevaPregunta.preguntasAleatoriasCPU(i.getNombre());
+                    if (respuestaCorrecta == true){                        
+                        System.out.println(i.getNombre() + " Ha acertado la pregunta");
+                        i.setPuntosPartida(i.getPuntosPartida()+1);
+                        i.setPuntosTotal(i.getPuntosTotal()+1);
+                        
+                    }else{
+                        System.out.println(i.getNombre() + " ha fallado la pregunta");
+                    }
+                    
+                }else{
+                    respuestaCorrecta = nuevaPregunta.preguntasAleatorias();
+                    if (respuestaCorrecta == true){
+                        
+                        System.out.println("Muy bien! "+ i.getNombre() + " ha acertado la pregunta");
+                        i.setPuntosPartida(i.getPuntosPartida()+1);
+                        i.setPuntosTotal(i.getPuntosTotal()+1);
+                        
+                    }else{
+                        System.out.println(i.getNombre() + " ha fallado la pregunta");
+                    }
+                }
+            }
+            nRonda++;
+            rondas--;
+        }
+        for (Jugadores i : JugadoresPartida){
+            resultadoPartida = resultadoPartida + i.getNombre() + " " + i.getPuntosPartida() + " " ;
+        } 
+        
+        System.out.println("FIN DE LA PARTIDA");
+        System.out.println("Este es el resultado de la partida\n" + resultadoPartida);
+        
+        File lectura1 = new File ("src/eljuego/Historico.txt");
+        Scanner archivoLeo = new Scanner(lectura1);
+        while (archivoLeo.hasNext()){
+            linea = archivoLeo.nextLine();
+            escribeTodo.add(linea);
+            
+        }
+        
+        FileWriter escribo = new FileWriter (historico);
+               
+        escribo.write (""  +/* "Partida Nº " + partida + ": " +*/ resultadoPartida + "\n");
+        
+        for (String i : escribeTodo){// Se vuelve a escribir el archivo Jugadores.txt con lo que contenia enteriormente
+                escribo.write ("" + i + "\n");
+            }
+        
+        escribo.close();
         
         return JugadoresPartida;
     }

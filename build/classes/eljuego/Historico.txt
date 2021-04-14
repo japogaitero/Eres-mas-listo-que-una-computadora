@@ -1,6 +1,5 @@
-Juh 0 0 
-Jop 0 0 
-Alberto 0 0 
-Juan 0 0 
-Peter 0 0 
-Nacho 0 0 
+Cpu1 4 Juan 4 
+Peter 3 Juan 3 
+Juan 2 
+Victor 3 
+Victor 2 
