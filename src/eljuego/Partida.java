@@ -171,9 +171,10 @@ public class Partida {
     public ArrayList pedirJugadores (int numJugadores)throws IOException, MiExcepcion{
         
         ArrayList <Jugadores> JugadoresPartida = new ArrayList ();
-        ArrayList <String> PosiblesJugadores = new ArrayList ();
+        ArrayList <Jugadores> PosiblesJugadores = new ArrayList ();
         int opcion; 
         String nombreJugador = "";
+        Jugadores jugadorNuevaPartida;
         //String nombreJugadorPartida = "";
         boolean continua, jugadorOK;
         Scanner teclado = new Scanner (System.in);
@@ -187,23 +188,23 @@ public class Partida {
                     switch(opcion) {
                         case 1:
                             GestionJugadores gestion1 = new GestionJugadores ();
-                            nombreJugador = gestion1.jugadorExistente(); 
+                            jugadorNuevaPartida = gestion1.jugadorExistente(); 
                             if (nombreJugador.isEmpty()){
                                 continua = true;
                                 break;
                             }else if (PosiblesJugadores.isEmpty()){
-                                PosiblesJugadores.add(nombreJugador);
-                                Jugadores nuevo = new Jugadores (nombreJugador);
+                                PosiblesJugadores.add(jugadorNuevaPartida);
+                                Jugadores nuevo = jugadorNuevaPartida;
                                 JugadoresPartida.add(nuevo);                                
                             }                            
                             continua = false; 
                             break;
                         case 2:
                             GestionJugadores gestion2 = new GestionJugadores ();
-                            nombreJugador = gestion2.nuevoJugador();
+                            jugadorNuevaPartida = gestion2.nuevoJugador();
                             if (PosiblesJugadores.isEmpty()){
-                                PosiblesJugadores.add(nombreJugador);
-                                Jugadores nuevo = new Jugadores (nombreJugador);
+                                PosiblesJugadores.add(jugadorNuevaPartida);
+                                Jugadores nuevo = jugadorNuevaPartida;
                                 JugadoresPartida.add(nuevo);                                
                             }  
                             continua = false;                            
@@ -236,7 +237,7 @@ public class Partida {
                     switch(opcion) {
                         case 1:
                             GestionJugadores gestion1 = new GestionJugadores ();                            
-                            nombreJugador = gestion1.jugadorExistente();
+                            jugadorNuevaPartida = gestion1.jugadorExistente();
                             if (nombreJugador.isEmpty()){
                                 continua = true;
                                 break;
@@ -257,7 +258,7 @@ public class Partida {
                             break;
                         case 2:
                             GestionJugadores gestion2 = new GestionJugadores ();
-                            nombreJugador = gestion2.nuevoJugador();
+                            jugadorNuevaPartida = gestion2.nuevoJugador();
                             jugadorOK = comprobarJugadores(nombreJugador, PosiblesJugadores, JugadoresPartida);
                             if (jugadorOK == false){
                                 continua = true;

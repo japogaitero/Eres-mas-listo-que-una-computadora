@@ -17,6 +17,11 @@ public class Jugadores extends GestionJugadores{
     private int puntosTotal;
     private boolean humano = false;
 
+    public Jugadores() {
+    }
+    
+    
+
     public Jugadores(String nombre) {
         this.nombre = nombre;
         this.puntosPartida = 0;

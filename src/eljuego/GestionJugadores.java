@@ -29,6 +29,7 @@ public class GestionJugadores extends Partida {
         String nombre;
         int opcion;
         boolean continua;
+        Jugadores jugador;
         Scanner teclado = new Scanner (System.in);
         
         do{
@@ -43,11 +44,12 @@ public class GestionJugadores extends Partida {
                 switch(opcion) {
                     case 1:
                         verJugadores();
+                        teclado.nextLine();
                         continua = true;
                         break;
                     case 2:
-                        nombre = nuevoJugador();
-                        System.out.println("Se ha creado el jugado " + nombre);
+                        jugador = nuevoJugador();
+                        System.out.println("Se ha creado el jugado " + jugador.getNombre());
                         continua = true;
                         break;
                     case 3:
@@ -55,6 +57,7 @@ public class GestionJugadores extends Partida {
                         continua = true;
                         break;
                     case 4:
+                        teclado.nextLine();
                         continua = false;
                         break;
                         
@@ -80,111 +83,84 @@ public class GestionJugadores extends Partida {
     public void verJugadores () throws IOException{
         
         String nombre;
+        String[] parts;
         ArrayList<String> nombres = new ArrayList<>();
         
         try{
-            File lectura1 = new File ("src/eljuego/Jugadores.txt");
-            Scanner archivoLeo = new Scanner(lectura1);
+            nombres = ElJuego.lineaDatosJugador();
             
-            while (archivoLeo.hasNext()){
-                String[] parts = archivoLeo.nextLine().split(" ");
-                nombre = parts[0].toLowerCase();
-                nombre =  nombre.toUpperCase().charAt(0) + nombre.substring(1, nombre.length()).toLowerCase();
-                nombres.add(nombre);
-            }
             if(nombres.isEmpty()){
                 System.out.println("Por ahora no hay jugadores. Prueba a introducir uno");
             }else{
                 System.out.println("Estos son los jugadores actuales");
                 for (String i : nombres){
-                    System.out.println(i);
+                    parts =i.split(" ");
+                    nombre = parts[0];
+                    System.out.println(nombre);
                 }
             }
             System.out.println("");
-            archivoLeo.close();
             
-        }catch (IOException e ){
+            
+        }catch (ArrayIndexOutOfBoundsException e ){
             System.out.println("Error: "+ e);
         }
     }
     
-    public String nuevoJugador () throws IOException, MiExcepcion{
+    public Jugadores nuevoJugador () throws IOException, MiExcepcion{
         
         Scanner teclado = new Scanner (System.in);
         String nombre = "";
-        String nombreArchivo;
-        String linea;
         String expresion="^Cpu\\d*$";
         System.out.println("Que usuario deseas crear? ");
-        ArrayList<String> arrayNombres = new ArrayList<>();
-        ArrayList<String> escribeTodo = new ArrayList<>();
+        ArrayList<String> archivoJugadores = new ArrayList<>();
+        ArrayList<Jugadores> arrayJugadoresExistentes = new ArrayList<>();
+        Jugadores nuevo = new Jugadores ("");
+        
         boolean newUsuario = true;
         
-        try{
-            File lectura1 = new File ("src/eljuego/Jugadores.txt");
-            Scanner archivoLeo = new Scanner(lectura1);
-            /* Se llena dos arrayList, uno con los nombres que comparará con el posible nuevo nombre
-            y otro con todos los datos para volver a escribir el archivo despues*/
-            
-            while (archivoLeo.hasNext()){
-                linea = archivoLeo.nextLine();
-                if (!linea.isEmpty()){
-                    String[] parts =linea.split(" ");
-                    escribeTodo.add(linea);
-                    nombreArchivo = parts[0].toLowerCase();
-                    nombreArchivo =  nombreArchivo.toUpperCase().charAt(0) + nombreArchivo.substring(1, nombreArchivo.length()).toLowerCase();
-                    arrayNombres.add(nombreArchivo);
-                }
-            }
-            archivoLeo.close();
-            
+        do{
             try{
-                do{
-                    newUsuario = true;
-                    nombre = teclado.nextLine().toLowerCase();
-                    if (nombre.contains(" ")) {
-                        throw new MiExcepcion(222);
-                    }else if (nombre.matches(expresion)){
-                        throw new MiExcepcion(333);
+                newUsuario = true;
+                
+                archivoJugadores = ElJuego.lineaDatosJugador();
+                arrayJugadoresExistentes = ElJuego.jugadoresEnArchivo(archivoJugadores);
+                
+                nombre = teclado.nextLine().toLowerCase();
+                if (nombre.contains(" ")) {
+                    throw new MiExcepcion(222);
+                }else if (nombre.matches(expresion)){
+                    throw new MiExcepcion(333);
+                }
+                nombre =  nombre.toUpperCase().charAt(0) + nombre.substring(1, nombre.length()).toLowerCase();
+                
+                for (Jugadores i : arrayJugadoresExistentes){ // Se comprueba que el nuevo nombre no esta ya en el arrayList
+                    if (i.getNombre().equalsIgnoreCase(nombre)){
+                        System.out.println("Este nombre de usuario ya existe. Prueba con otro nombre");
+                        newUsuario = false;
+                        break;
                     }
-                    nombre =  nombre.toUpperCase().charAt(0) + nombre.substring(1, nombre.length()).toLowerCase();
-                    
-                    for (String i : arrayNombres){ // Se comprueba que el nuevo nombre no esta ya en el arrayList
-                        if (nombre.equals(i) ){
-                            System.out.println("Este nombre de usuario ya existe");
-                            System.out.println("Prueba con otro nombre");
-                            //teclado.nextLine();
-                            newUsuario = false;
-                            break;
-                        }
-                    }
-                    
-                }while (newUsuario == false);
+                }
+                if (newUsuario == true){
+                    nuevo = new Jugadores (nombre);
+                    ElJuego.EscriboFichero(nombre, archivoJugadores);
+                }
+                ElJuego.EscriboFichero("", archivoJugadores);
+                
             }catch (MiExcepcion ex){
                 System.out.println(ex.getMessage());
-                //teclado.next();
-                //System.out.println("Que usuario deseas crear? ");
+                newUsuario = false;
+            }catch (IOException d ){
+                System.out.println("Error: "+ d);
+                System.out.println("Que usuario deseas crear? ");
                 newUsuario = false;
             }
-            FileWriter escribo = new FileWriter (lectura1);
-            
-            // Solo se añade nuevo usuario si el introducido no existia previamente o si es el primer Usuario
-            if (newUsuario = true){
-                escribo.write ("" + nombre + " 0 0 \n");
-            }
-            for (String i : escribeTodo){// Se vuelve a escribir el archivo Jugadores.txt con lo que contenia enteriormente
-                escribo.write ("" + i + "\n");
-            }
-            
-            escribo.close();
-            //}
-        }catch (IOException e ){
-            System.out.println("Error: "+ e);
-        }
-        return nombre;
+        }while (newUsuario == false);
+        return nuevo;
     }
     
-    public void eliminarJugador () throws IOException{
+    
+    private void eliminarJugador () throws IOException{
         
         Scanner teclado = new Scanner (System.in);
         String nombre = "";
@@ -192,161 +168,128 @@ public class GestionJugadores extends Partida {
         String linea;
         String expresion="^Cpu\\d*$";
         System.out.println("Que usuario deseas eliminar? ");
-        ArrayList<String> arrayNombres = new ArrayList<>();
-        ArrayList<String> escribeTodo = new ArrayList<>();
+        //ArrayList<String> arrayNombres = new ArrayList<>();
+        ArrayList<String> archivoJugadores = new ArrayList<>();
+        ArrayList<Jugadores> arrayJugadoresExistentes = new ArrayList<>();
         boolean usuarioExiste = true;
         
-        try{
-            File lectura1 = new File ("src/eljuego/Jugadores.txt");
-            Scanner archivoLeo = new Scanner(lectura1);
-            /* Se llena dos arrayList, uno con los nombres que comparará con el posible nuevo nombre
-            y otro con todos los datos para volver a escribir el archivo despues*/
-            
-            while (archivoLeo.hasNext()){
-                linea = archivoLeo.nextLine();
-                if (!linea.isEmpty()){
-                    String[] parts =linea.split(" ");
-                    escribeTodo.add(linea);
-                    nombreArchivo = parts[0].toLowerCase();
-                    nombreArchivo =  nombreArchivo.toUpperCase().charAt(0) + nombreArchivo.substring(1, nombreArchivo.length()).toLowerCase();
-                    arrayNombres.add(nombreArchivo);
-                }
-            }
-            archivoLeo.close();
-            
+        do{
             try{
-                do{
-                    usuarioExiste = false;
-                    nombre = teclado.nextLine().toLowerCase();
-                    if (nombre.contains(" ")) {
-                        throw new MiExcepcion(222);
-                    }else if (nombre.matches(expresion)){
-                        throw new MiExcepcion(333);
+                
+                archivoJugadores = ElJuego.lineaDatosJugador();
+                arrayJugadoresExistentes = ElJuego.jugadoresEnArchivo(archivoJugadores);
+                usuarioExiste = false;
+                nombre = teclado.nextLine().toLowerCase();
+                if (nombre.contains(" ")) {
+                    throw new MiExcepcion(222);
+                }else if (nombre.matches(expresion)){
+                    throw new MiExcepcion(333);
+                }
+                nombre =  nombre.toUpperCase().charAt(0) + nombre.substring(1, nombre.length()).toLowerCase();
+                
+                for (Jugadores i : arrayJugadoresExistentes){ // Se comprueba que el nuevo nombre no esta ya en el arrayList
+                    if (i.getNombre().equalsIgnoreCase(nombre)){
+                        System.out.println("Se va a borrar el nombre " + nombre);
+                        //System.out.println("Prueba con otro nombre");
+                        //teclado.nextLine();
+                        arrayJugadoresExistentes.remove(i);
+                        archivoJugadores.remove(i);
+                        usuarioExiste = true;
+                        break;
                     }
-                    nombre =  nombre.toUpperCase().charAt(0) + nombre.substring(1, nombre.length()).toLowerCase();
-                    
-                    for (int i = 0; i < arrayNombres.size(); i++){ // Se comprueba que el nuevo nombre esta ya en el arrayList
-                        if (nombre.equals(arrayNombres.get(i)) ){
-                            System.out.println("Se va a borrar el nombre " + nombre);
-                            //System.out.println("Prueba con otro nombre");
-                            //teclado.nextLine();
-                            arrayNombres.remove(i);
-                            escribeTodo.remove(i);
-                            usuarioExiste = true;
-                            break;
-                        }
-                    }if (usuarioExiste == false)
+                }if (usuarioExiste == false){
                     System.out.println("El jugador que quieres eliminar no existe");
                     usuarioExiste = true;
-                    
-                }while (usuarioExiste == false);
+                }else if  (usuarioExiste == true){
+                    ElJuego.EscriboFichero("", archivoJugadores);
+                }
+                
             }catch (MiExcepcion ex){
-                System.out.println(ex.getMessage());                
+                System.out.println(ex.getMessage());
+                usuarioExiste = false;
+            }catch (IOException d ){
+                System.out.println("Error: "+ d);
+                System.out.println("Que usuario deseas eliminar? ");
                 usuarioExiste = false;
             }
-            FileWriter escribo = new FileWriter (lectura1);
             
-            
-            for (String i : escribeTodo){// Se vuelve a escribir el archivo Jugadores.txt con lo que contenia enteriormente
-                escribo.write ("" + i + "\n");
-            }
-            
-            escribo.close();
-            //}
-        }catch (IOException e ){
-            System.out.println("Error: "+ e);
-        }
+        }while (usuarioExiste = false);
     }
     
-    public String jugadorExistente () throws FileNotFoundException, MiExcepcion{
+    public Jugadores jugadorExistente () throws FileNotFoundException, MiExcepcion{
         
-        String nombreArchivo;
-        String linea;
-        String nombre = "";
-        String opcion = "";
-        String expresion="^Cpu\\d*$";
-        boolean jugadorExiste = false;
-        boolean newUsuario = true;
         Scanner teclado = new Scanner (System.in);
-        ArrayList<String> arrayNombres = new ArrayList<>();
-        ArrayList<String> escribeTodo = new ArrayList<>();
-        System.out.println("Con que usuario quieres jugar?");
-        //this.jugadores = new ArrayList<>();
-        //this.jugadoresPartida = new ArrayList<>();
+        String nombre = "";
+        String opcion;
+        String expresion="^Cpu\\d*$";
+        boolean newUsuario;
+        boolean jugadorExiste = false;
+        Jugadores jugadorExistente = new Jugadores ("");
+        ArrayList<String> archivoJugadores = new ArrayList<>();
+        ArrayList<Jugadores> arrayJugadoresExistentes = new ArrayList<>();
         
-        try{
-            File lectura1 = new File ("src/eljuego/Jugadores.txt");
-            Scanner archivoLeo = new Scanner(lectura1);
-            while (archivoLeo.hasNext()){
-                linea = archivoLeo.nextLine();
-                if (!linea.isEmpty()){
-                    String[] parts =linea.split(" ");
-                    escribeTodo.add(linea);
-                    nombreArchivo = parts[0].toLowerCase();
-                    nombreArchivo =  nombreArchivo.toUpperCase().charAt(0) + nombreArchivo.substring(1, nombreArchivo.length()).toLowerCase();
-                    arrayNombres.add(nombreArchivo);
-                }
-            }
-            archivoLeo.close();
-            do{
-                try{
-                    newUsuario = false;
-                    nombre = teclado.nextLine().toLowerCase();
-                    if (nombre.contains(" ")) {
-                        throw new MiExcepcion(222);
-                    }else if (nombre.matches(expresion)){
-                        throw new MiExcepcion(444);
-                    }
-                }catch (MiExcepcion ex){
-                    System.out.println(ex.getMessage());
-                    newUsuario = false;
-                }
-            }while ( newUsuario == true);
-            nombre =  nombre.toUpperCase().charAt(0) + nombre.substring(1, nombre.length()).toLowerCase();
-            
-            for (String i : arrayNombres){ // Se comprueba si el  nombre  esta ya en el arraList
-                if (nombre.equals(i)){
-                    //System.out.println( nombre + " listo para jugar!!");
-                    jugadorExiste = true;
-                    break;
-                }
-            }
-            if (jugadorExiste == false || arrayNombres.isEmpty()) {
-                System.out.println("Este nombre de usuario no existe. Desea Crearlo? Escriba SI/NO");
-                do {
-                    opcion = teclado.next();
-                    opcion = opcion.toLowerCase();
-                    if ("si".equals(opcion)){
-                        newUsuario = true;
-                    }else if ("no".equalsIgnoreCase(opcion)){
-                        jugadorExiste = false;
-                        nombre = "";
-                        System.out.println("Eliga nueva opcion");
-                    }else{
-                        System.out.println("Escriba simplemente \"si\" o \"no\"");
-                    }
-                }while (!"no".equalsIgnoreCase(opcion) && !"si".equalsIgnoreCase(opcion));
-            }
-            
-            
-            
-            FileWriter escribo = new FileWriter (lectura1);
-            if(newUsuario == true ){// Solo se añade nuevo usuario si el introducido no existia previamente o si es el primer Usuario
-                escribo.write ("" + nombre + " 0 0 \n");
-                Jugadores nuevo = new Jugadores (nombre);
-                //this.jugadores.add(nuevo);
+        System.out.println("Con que usuario quieres jugar?");
+        
+        
+        do{
+            try{
+                jugadorExiste = false;
+                
+                archivoJugadores = ElJuego.lineaDatosJugador();
+                arrayJugadoresExistentes = ElJuego.jugadoresEnArchivo(archivoJugadores);
+                
                 newUsuario = true;
+                nombre = teclado.nextLine().toLowerCase();
+                if (nombre.contains(" ")) {
+                    throw new MiExcepcion(222);
+                }else if (nombre.matches(expresion)){
+                    throw new MiExcepcion(333);
+                }
+                nombre =  nombre.toUpperCase().charAt(0) + nombre.substring(1, nombre.length()).toLowerCase();
+                
+                for (Jugadores i : arrayJugadoresExistentes){ // Se comprueba que el nuevo nombre no esta ya en el arrayList
+                    if (i.getNombre().equalsIgnoreCase(nombre)){
+                        System.out.println(nombre + " ha sido escogido para jugar");
+                        jugadorExiste = true;
+                        break;
+                    }
+                }
+                
+                if (jugadorExiste == true){
+                    jugadorExistente = new Jugadores (nombre);
+                    
+                }else if (jugadorExiste == false || arrayJugadoresExistentes.isEmpty()) {
+                    System.out.println("Este nombre de usuario no existe. Desea Crearlo? Escriba SI/NO");
+                    do {
+                        opcion = teclado.next();
+                        if ("si".equalsIgnoreCase(opcion)){
+                            newUsuario = true;
+                        }else if ("no".equalsIgnoreCase(opcion)){
+                            jugadorExiste = true;
+                            nombre = "";
+                            System.out.println("Eliga nueva opcion");
+                        }else{
+                            System.out.println("Escriba simplemente \"si\" o \"no\"");
+                        }
+                    }while (!"no".equalsIgnoreCase(opcion) && !"si".equalsIgnoreCase(opcion));
+                }
+                if (newUsuario == true){
+                    jugadorExistente = new Jugadores (nombre);
+                    ElJuego.EscriboFichero(nombre, archivoJugadores);
+                }
+                ElJuego.EscriboFichero("", archivoJugadores);
+                
+            }catch (IOException e ){
+                System.out.println("Error: "+ e);
+                System.out.println("Con que usuario quieres jugar?");
+                newUsuario = false;
+                
+            }catch (MiExcepcion ex){
+                System.out.println(ex.getMessage());
+                newUsuario = false;
             }
-            for (String i : escribeTodo){// Se vuelve a escribir el archivo Jugadores.txt con lo que contenia enteriormente
-                escribo.write ("" + i + "\n");
-            }
-            
-            escribo.close();
-            
-        }catch (IOException e ){
-            System.out.println("Error: "+ e);
-        }
-        return nombre;
+        }while (jugadorExiste == false);
+        return jugadorExistente;
     }
     
     public static String nuevoCPU () throws IOException{
@@ -359,22 +302,13 @@ public class GestionJugadores extends Partida {
         
         ArrayList<String> arrayNombres = new ArrayList<>();
         ArrayList<String> arrayCpu = new ArrayList<>();
-        ArrayList<String> escribeTodo = new ArrayList<>();
+        ArrayList<String> escriboArchivoJugadores = new ArrayList<>();
         
         try{
+            
+            escriboArchivoJugadores = ElJuego.lineaDatosJugador();
             File lectura1 = new File ("src/eljuego/Jugadores.txt");
-            Scanner archivoLeo = new Scanner(lectura1);
-            /* Se llena dos arrayList, uno con los nombres que comparará con el posible nuevo nombre
-            y otro con todos los datos para volver a escribir el archivo despues*/
-            while (archivoLeo.hasNext()){
-                linea = archivoLeo.nextLine();
-                String[] parts =linea.split(" ");
-                escribeTodo.add(linea);
-                nombreArchivo = parts[0].toLowerCase();
-                nombreArchivo =  nombreArchivo.toUpperCase().charAt(0) + nombreArchivo.substring(1, nombreArchivo.length()).toLowerCase();
-                arrayNombres.add(nombreArchivo);
-            }
-            archivoLeo.close();
+            
             
             nombre =  nombre.toUpperCase().charAt(0) + nombre.substring(1, nombre.length()).toLowerCase();
             
@@ -390,7 +324,7 @@ public class GestionJugadores extends Partida {
             FileWriter escribo = new FileWriter (lectura1);
             escribo.write ("" + nombre + " 0 0 \n");
             
-            for (String i : escribeTodo){// Se vuelve a escribir el archivo Jugadores.txt con lo que contenia enteriormente
+            for (String i : escriboArchivoJugadores){// Se vuelve a escribir el archivo Jugadores.txt con lo que contenia enteriormente
                 escribo.write ("" + i + "\n");
             }
             escribo.close();

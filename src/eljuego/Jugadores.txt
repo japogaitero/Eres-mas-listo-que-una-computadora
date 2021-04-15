@@ -1,3 +1,7 @@
+Kioto 0 0 
+Porras 0 0 
+Chicho 0 0 
+Lio 0 0 
 Cpu1 0 0 
 Jua 0 0 
 Pedro 0 0 
