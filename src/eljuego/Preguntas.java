@@ -83,7 +83,7 @@ public class Preguntas {
         char opcionCpu;
         String respuesta = "";
         random = ElJuego.aleatorio(1,3);  
-        randomIngles = ElJuego.aleatorio(1, 4);
+        randomIngles = ElJuego.aleatorio(0, 3);
         /*este metodo selecciona de manera aleatoria una pregunta y asigna su corresponiendte respuesta
         
         */

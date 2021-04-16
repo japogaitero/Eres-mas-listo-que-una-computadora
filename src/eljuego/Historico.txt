@@ -1,3 +1,6 @@
+Cpu15 11 Cpu14 6 Cpu12 5 Cpu13 9 
+Cpu8 1 Cpu10 3 Cpu11 0 Cpu9 1 
+Cpu2 10 Cpu3 10 Cpu4 7 
 Cpu1 4 Juan 4 
 Peter 3 Juan 3 
 Juan 2 

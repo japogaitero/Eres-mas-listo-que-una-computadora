@@ -32,7 +32,7 @@ public class MiExcepcion extends Exception{
                 mensaje="No se permiten nombres con espacio. Por favor introduce un nombre sin espacios";
                 break;
             case 333:
-                mensaje="No se permiten crear usuarios con nombre CPU. Pruebe con otro nombre";
+                mensaje="No se permiten crear ni usar usuarios con nombre CPU. Pruebe con otro nombre";
                 break;
             case 444:
                 mensaje="No se permiten usuar usuarios CPU. Pruebe con otro nombre";

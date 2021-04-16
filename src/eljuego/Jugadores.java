@@ -15,19 +15,27 @@ public class Jugadores extends GestionJugadores{
     private String nombre;
     private int puntosPartida;
     private int puntosTotal;
-    private boolean humano = false;
+    private boolean humano;
+    //private String expresion="^Cpu\\d*$";
 
     public Jugadores() {
     }
+
+    
     
     
 
-    public Jugadores(String nombre) {
-        this.nombre = nombre;
+    public Jugadores(String usuario) {
+        String expresion="^Cpu\\d*$";
+        this.nombre = usuario;
         this.puntosPartida = 0;
         this.puntosTotal = 0;
-        humano = true;
+        this.humano = true;
         
+        /*if (usuario.equalsIgnoreCase(expresion)){
+            System.out.println("creamos un ordenadorrrrrrr");
+            this.humano = false;
+        }*/
         
     }
 
@@ -61,11 +69,12 @@ public class Jugadores extends GestionJugadores{
 
     public void setHumano(boolean humano) {
         this.humano = humano;
+        //System.out.println("hemos cambiado a cpu");
     }
 
     @Override
     public String toString() {
-        return "Jugadores{" + "nombre=" + nombre + '}';
+        return nombre + " " + "0" + " " + puntosTotal;
     }
     
     
