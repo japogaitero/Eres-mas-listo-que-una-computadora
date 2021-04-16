@@ -266,6 +266,7 @@ public class ElJuego {
     }
     
     public  static void escriboFichero (String nuevoJugador, ArrayList <String> lineaDatosJugador) throws IOException{
+        
         File f = new File ("src/eljuego/Jugadores.txt");
         
         
@@ -308,8 +309,7 @@ public class ElJuego {
                     String jugadorArchivo = (lineaDatosJugador.get(j)).getNombre();
                     if (jugadorArchivo.equalsIgnoreCase(jugadorActualizado)){
                         System.out.println("Se va a actualizar los datos del nombre " + jugadorArchivo);
-                        lineaDatosJugador.get(j).setPuntosTotal(puntuacionesNuevas.get(i).getPuntosTotal()+lineaDatosJugador.get(j).getPuntosTotal());
-                        
+                        lineaDatosJugador.get(j).setPuntosTotal(puntuacionesNuevas.get(i).getPuntosTotal()+lineaDatosJugador.get(j).getPuntosTotal());                        
                         
                     }
                 }
@@ -328,8 +328,7 @@ public class ElJuego {
         }
     }
     
-    public static void historico(){
-        
+    public static void historico(){        
         
         String linea;
         ArrayList<String> historico = new ArrayList<>();
@@ -374,8 +373,7 @@ public class ElJuego {
                     historico.add(linea);
                 }
             }
-            archivoLeo.close();
-            //Collections.reverse(historico);
+            archivoLeo.close();            
             FileWriter actualizoHistorico = new FileWriter(lectura1);
             
             actualizoHistorico.write ("" + resultados + "\n");
@@ -399,6 +397,8 @@ public class ElJuego {
         String expresion="^Cpu\\d*$";
         int puntuacion;
         
+        TreeMap <Integer, String> h = new TreeMap(Comparator.reverseOrder());
+        
         for (Jugadores i :arrayJugadores ){
             if(!i.getNombre().matches(expresion)){
             nombre = i.getNombre();
@@ -406,6 +406,7 @@ public class ElJuego {
             Ranking.put(nombre, puntuacion);
             }
         }
+        
         
         Map<String, Integer> ordenadoPorPuntos = Ranking.entrySet()
                 .stream()

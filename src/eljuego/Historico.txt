@@ -1,3 +1,9 @@
+Alfonso 3 
+Giopet 3 
+Jiop 3 
+Jose 6 
+Pedro 3 
+Victor 2 
 Cpu15 11 Cpu14 6 Cpu12 5 Cpu13 9 
 Cpu8 1 Cpu10 3 Cpu11 0 Cpu9 1 
 Cpu2 10 Cpu3 10 Cpu4 7 

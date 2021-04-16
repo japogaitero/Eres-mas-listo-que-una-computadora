@@ -142,7 +142,7 @@ public class GestionJugadores extends Partida {
                     }
                 }
                 if (newUsuario == true){
-                     nuevo = new Jugadores (nombre);
+                    nuevo = new Jugadores (nombre);
                     ElJuego.escriboFichero(nombre, archivoJugadores);
                 }
                 //ElJuego.escriboFichero("", archivoJugadores);
@@ -238,7 +238,7 @@ public class GestionJugadores extends Partida {
                 archivoJugadores = ElJuego.lineaDatosJugador();
                 arrayJugadoresExistentes = ElJuego.jugadoresEnArchivo(archivoJugadores);
                 
-                newUsuario = true;
+                newUsuario = false;
                 nombre = teclado.nextLine().toLowerCase();
                 nombre =  nombre.toUpperCase().charAt(0) + nombre.substring(1, nombre.length()).toLowerCase();
                 
@@ -259,6 +259,7 @@ public class GestionJugadores extends Partida {
                 
                 if (jugadorExiste == true){
                     jugadorExistente = new Jugadores (nombre);
+                    
                     
                 }else if (jugadorExiste == false || arrayJugadoresExistentes.isEmpty()) {
                     System.out.println("Este nombre de usuario no existe. Desea Crearlo? Escriba SI/NO");
@@ -281,7 +282,6 @@ public class GestionJugadores extends Partida {
                     ElJuego.escriboFichero(nombre, archivoJugadores);
                     jugadorExiste = true;
                 }
-                ElJuego.escriboFichero("", archivoJugadores);
                 
             }catch (IOException e ){
                 System.out.println("Error: "+ e);
