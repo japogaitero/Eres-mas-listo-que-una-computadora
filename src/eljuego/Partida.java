@@ -71,6 +71,7 @@ public class Partida {
         int opcion; 
         //String nombreJugador = "";
         Jugadores jugadorNuevaPartida;
+        Jugadores existe;
         //String nombreJugadorPartida = "";
         boolean continua, jugadorOK;
         Scanner teclado = new Scanner (System.in);
@@ -79,24 +80,33 @@ public class Partida {
             do{
                 System.out.println("\nSeleciona:\n1. Jugador existente\n2. Jugador nuevo\n");                
                 try{
-                    continua = false;                    
+                    continua = true;
                     opcion = teclado.nextInt();
                     switch(opcion) {
                         case 1:
-                            JugadoresPartida.add(GestionJugadores.jugadorExistente());
-                                continua = false;
+                            existe = GestionJugadores.jugadorExistente();
+                            if (existe.isExists() == false){
                                 break;
-                           
-                        case 2:
-                            JugadoresPartida.add(GestionJugadores.nuevoJugador());
+                            }
+                            JugadoresPartida.add(existe);
                             continua = false;                            
                             break;
-                        
+                            
+                        case 2:
+                            existe = GestionJugadores.nuevoJugador();
+                            if (existe.isExists() == false){
+                                break;
+                            }
+                            JugadoresPartida.add(existe);
+                            continua = false;                           
+                            
+                            break;
+                            
                         default:
                             System.out.println("Valor no valido, por favor seleccione :");
                             continua = true;
                             teclado.nextLine();
-                    }                    
+                    }
                     
                 }catch (InputMismatchException e ){
                     System.out.println("Valor no válido, por favor introduzca una opción válida (entre 1 y ñññññññññ)");
@@ -116,39 +126,49 @@ public class Partida {
             do{                
                 System.out.println("\n1. Jugador existente\n2. Jugador nuevo\n3. Juega contra el ordenador (CPU)");                
                 try{
-                    continua = false;                    
+                    continua = true;
                     opcion = teclado.nextInt();
                     switch(opcion) {
-                        case 1:
-                            jugadorNuevaPartida = GestionJugadores.jugadorExistente();
-                            if (JugadoresPartida.contains(jugadorNuevaPartida)){
-                                continua = true;
+                        case 1:    
+                            existe = GestionJugadores.jugadorExistente();
+                            if (existe.isExists() == false){
+                                break;
+                            }
+                            
+                            
+                            if (JugadoresPartida.contains(existe)){
                                 System.out.println("esteeeeeeeeeeej ugador ya estaaaaaaaa");
                             }else{
-                                JugadoresPartida.add(jugadorNuevaPartida);
+                                JugadoresPartida.add(existe);
                                 continua = false;
                             }
-                                break;
+                            break;
                             
                             
                         case 2:
+                            existe = GestionJugadores.nuevoJugador();
+                            if (existe.isExists() == false){
+                                break;
+                            }
                             
-                            jugadorNuevaPartida = GestionJugadores.nuevoJugador();
-                            if (JugadoresPartida.contains(jugadorNuevaPartida)){
-                                continua = true;
+                            
+                            if (JugadoresPartida.contains(existe)){
                                 System.out.println("esteeeeeeeeeeej ugador ya estaaaaaaaa");
                             }else{
-                                JugadoresPartida.add(jugadorNuevaPartida);
+                                JugadoresPartida.add(existe);
                                 continua = false;
                             }
-                                break;
+                            break;
                             
-                           
+                            
+                            
                         case 3:
                             
+                            
                             jugadorNuevaPartida = GestionJugadores.nuevoCPU();
-                            if (JugadoresPartida.contains(jugadorNuevaPartida)){
-                                continua = true;
+                            
+                            
+                            if (JugadoresPartida.contains(jugadorNuevaPartida)){                                
                                 System.out.println("esteeeeeeeeeeej ugador ya estaaaaaaaa");
                             }else{
                                 JugadoresPartida.add(jugadorNuevaPartida);
@@ -218,51 +238,68 @@ public class Partida {
             i.setPuntosPartida(0);
         }
         
+        
         while(rondas > 0){
             System.out.println("\nRonda: " + nRonda);
+            
+            if( JugadoresPartida.size() == 1){
+                Preguntas nuevaPregunta = new Preguntas();
+                Jugadores unJugador = JugadoresPartida.get(0);
+                    respuestaCorrecta = nuevaPregunta.preguntasAleatorias();
+                    if (respuestaCorrecta == true){                        
+                        System.out.println("Muy bien! Has acertado la pregunta");
+                        unJugador.setPuntosPartida(unJugador.getPuntosPartida()+1);
+                        unJugador.setPuntosTotal(unJugador.getPuntosTotal()+1);
+                        
+                    }else{
+                        System.out.println("Ohh no! Has fallado la pregunta");
+                    }
+            
+            }else{
+            
             for (Jugadores i : JugadoresPartida){
                 System.out.println("Turno de: " + i.getNombre());
                 Preguntas nuevaPregunta = new Preguntas();
                 
-                if (i.getNombre().matches(expresion)){
+                if (i.isHumano() == false){
                     System.out.println("oh va a jugar la " + i.getNombre());
                     respuestaCorrecta = nuevaPregunta.preguntasAleatoriasCPU(i.getNombre());
                     if (respuestaCorrecta == true){                        
                         System.out.println(i.getNombre() + " ha acertado la pregunta");
                         i.setPuntosPartida(i.getPuntosPartida()+1);
-                        i.setPuntosTotal(i.getPuntosTotal()+1);
-                        
+                        i.setPuntosTotal(i.getPuntosTotal()+1);                        
                     }else{
                         System.out.println(i.getNombre() + " ha fallado la pregunta");
+                        
                     }
                     
                 }else{
                     respuestaCorrecta = nuevaPregunta.preguntasAleatorias();
                     if (respuestaCorrecta == true){
-                        
                         System.out.println("Muy bien! "+ i.getNombre() + " ha acertado la pregunta");
                         i.setPuntosPartida(i.getPuntosPartida()+1);
                         i.setPuntosTotal(i.getPuntosTotal()+1);
-                        
                     }else{
                         System.out.println(i.getNombre() + " ha fallado la pregunta");
                     }
                 }
             }
+            }
+            ElJuego.escribeParaContinuar();
             nRonda++;
             rondas--;
         }
+        
+        
         for (Jugadores i : JugadoresPartida){
             resultadoPartida = resultadoPartida + i.getNombre() + " " + i.getPuntosPartida() + " " ;
-        } 
-        
+        }
         ElJuego.actualizoHistorico(resultadoPartida);
-        
         System.out.println("FIN DE LA PARTIDA");
         System.out.println("Este es el resultado de la partida\n" + resultadoPartida);
         
-        ArrayList<String> historicoNuevo = new ArrayList<>();
-        ArrayList<Jugadores> arrayJugadoresExistentes = new ArrayList<>();
+        //ArrayList<String> historicoNuevo = new ArrayList<>();
+        //ArrayList<Jugadores> arrayJugadoresExistentes = new ArrayList<>();
         
         for (Jugadores i : JugadoresPartida){
             i.setPuntosPartida(0);

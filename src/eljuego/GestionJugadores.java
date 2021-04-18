@@ -23,7 +23,7 @@ public class GestionJugadores extends Partida {
     
     
     
-    public   void menuJugadores() throws IOException, MiExcepcion{
+    public static void menuJugadores() throws IOException, MiExcepcion{
         ArrayList<String> nombres = new ArrayList<>();
         String nombre;
         int opcion;
@@ -79,7 +79,7 @@ public class GestionJugadores extends Partida {
         
     }
     
-    public void verJugadores () throws IOException{
+    public static void verJugadores () throws IOException{
         
         String nombre;
         String[] parts;
@@ -160,7 +160,7 @@ public class GestionJugadores extends Partida {
     }
     
     
-    private void eliminarJugador () throws IOException{
+    private static void eliminarJugador () throws IOException{
         
         Scanner teclado = new Scanner (System.in);
         String nombre = "";
@@ -228,6 +228,8 @@ public class GestionJugadores extends Partida {
         ArrayList<String> archivoJugadores = new ArrayList<>();
         ArrayList<Jugadores> arrayJugadoresExistentes = new ArrayList<>();
         
+        
+        
         System.out.println("Con que usuario quieres jugar?");
         
         
@@ -244,7 +246,7 @@ public class GestionJugadores extends Partida {
                 
                 if (nombre.contains(" ")) {
                     throw new MiExcepcion(222);
-                }else if (nombre.matches("expresion") ){//|| nombre.equalsIgnoreCase ("cpu")
+                }else if (nombre.matches(expresion) || nombre.equalsIgnoreCase ("cpu")){//
                     throw new MiExcepcion(333);
                 }
                 
@@ -268,9 +270,9 @@ public class GestionJugadores extends Partida {
                         if ("si".equalsIgnoreCase(opcion)){
                             newUsuario = true;
                         }else if ("no".equalsIgnoreCase(opcion)){
-                            jugadorExiste = true;
-                            nombre = "";
+                            jugadorExiste = true;                            
                             System.out.println("Eliga nueva opcion");
+                            
                         }else{
                             System.out.println("Escriba simplemente \"si\" o \"no\"");
                         }
@@ -285,7 +287,7 @@ public class GestionJugadores extends Partida {
                 
             }catch (IOException e ){
                 System.out.println("Error: "+ e);
-                System.out.println("Con que usuario quieres jugar?");
+                System.out.println("Con que usuario quuuuuuuuuuieres jugar?");
                 jugadorExiste = false;
                 
             }catch (MiExcepcion ex){
@@ -310,7 +312,7 @@ public class GestionJugadores extends Partida {
         Scanner teclado = new Scanner (System.in);
         String nombre = "Cpu";
         String expresion="^Cpu\\d*$";
-        System.out.println("Que usuario deseas crear? ");
+        //System.out.println("Que usuario deseas crear? ");
         ArrayList<String> archivoJugadores = new ArrayList<>();
         ArrayList<Jugadores> arrayJugadoresExistentes = new ArrayList<>();
         Jugadores nuevo = new Jugadores ();
@@ -326,7 +328,7 @@ public class GestionJugadores extends Partida {
             for (Jugadores i : arrayJugadoresExistentes){ // Se comprueba si hay algun Cpu* en el arraList
                 //if (i.matches(expresion)){
                 if (!i.isHumano()){
-                    System.out.println("hay un ordenadooooor");
+                    //System.out.println("hay un ordenadooooor");
                     arrayCpu.add("");
                 }
             }            

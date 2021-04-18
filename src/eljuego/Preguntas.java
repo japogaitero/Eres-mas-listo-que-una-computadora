@@ -8,6 +8,7 @@ package eljuego;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,13 +40,20 @@ public class Preguntas {
         char posibleLetraRespuesta;
         random = ElJuego.aleatorio(1,3);   
         Scanner teclado = new Scanner (System.in);
+        //teclado.nextLine();
         
         //este metodo selecciona de manera aleatoria una pregunta y asigna su corresponiendte respuesta       
         switch(random) {
             case 1:
                 respuesta = adivinaPalabra();
+                respuesta = Normalizer.normalize(respuesta , Normalizer.Form.NFD);
+                respuesta = respuesta.replaceAll("[^\\p{ASCII}]", "");
+                
                 posibleRespuesta = teclado.nextLine();
-                if (posibleRespuesta.equals(respuesta)){
+                //posibleRespuesta = Normalizer.normalize(posibleRespuesta , Normalizer.Form.NFD);
+                //posibleRespuesta = posibleRespuesta.replaceAll("[^\\p{ASCII}]", "");
+                
+                if (posibleRespuesta.equalsIgnoreCase(respuesta)){
                     acierto = true;
                 }
                 break;
@@ -118,7 +126,7 @@ public class Preguntas {
     public static String adivinaPalabra () throws ScriptException{
         String palabra = "" ;        
         
-        System.out.print("Adivine la letras que faltan en la palabra: ");
+        System.out.print("Adivina la letras que faltan en la palabra: (introduce la palabra sin acentos) ");
         try {
             
             File f = new File ("src/eljuego/diccionario.txt");
@@ -133,6 +141,8 @@ public class Preguntas {
                 }
             }
             palabra = palabras.get((int) Math.floor(Math.random()*(palabras.size())));
+            
+            
             //System.out.println(palabra);
             
             char[] arrayTemp = palabra.toCharArray();
@@ -146,16 +156,16 @@ public class Preguntas {
             boolean continua = true;
             
             while(asteriscos > 0 ){
-                //System.out.println("laaaa! "+ posicion);
+                
                 continua = true;
-                //arrayTemp[posicion] = '*';
+                
                 posicion = (int) Math.floor(Math.random()*(palabra.length()));
-                //System.out.println("siguiente int es  " + posicion);
+                
                 if (posiciones.contains(posicion)){
                     continua = false;
-                    //System.out.println("esta repetido");
+                    
                     posicion = (int) Math.floor(Math.random()*(palabra.length()));
-                    //posiciones.remove(posiciones.size()-1);
+                    
                 }
                 if (continua == true){
                     posiciones.add(posicion);
@@ -163,7 +173,7 @@ public class Preguntas {
                     asteriscos--;
                 }
             }
-            //arrayTemp[5] = '*'; //Donde 'x' es la posición que buscas
+            
             String palabraadivina = String.valueOf(arrayTemp);
             System.out.println(palabraadivina);
             
@@ -312,13 +322,14 @@ public class Preguntas {
         ArrayList  <ArrayList> arrayPreguntas = new ArrayList();  
         HashMap < String , Character > letraRespuesta = new HashMap <> ();
         ArrayList <String> preguntaConLetra = new ArrayList();
+        Scanner ingles = null;
         
-        try {   
+        try { 
             
             File f = new File ("src/eljuego/ingles.txt");
-            Scanner ingles = new Scanner (f);
+            ingles = new Scanner (f);
             
-            while(ingles.hasNext() ){    // rellena el arrayPreguntas con arrays (pregunta) formados  por la pregunta las posibles opciones
+            while(ingles.hasNext() ){// rellena el arrayPreguntas con arrays (pregunta) formados  por la pregunta las posibles opciones
                 pregunta = new ArrayList();
                 pregunta.add(ingles.nextLine());
                 pregunta.add(ingles.nextLine());
@@ -326,11 +337,9 @@ public class Preguntas {
                 pregunta.add(ingles.nextLine());
                 pregunta.add(ingles.nextLine());               
                 arrayPreguntas.add(pregunta);                
-            }
-            
+            }            
             // calcula un valor aleatorio de entre las posiciones (o preguntas) que tiene el ArrayList preguntas
-            int y = (int) (Math.random()*arrayPreguntas.size());   
-            
+            int y = (int) (Math.random()*arrayPreguntas.size()); 
             pregunta = arrayPreguntas.get(y); // pregunta al azar con sus posibles respuestas
             System.out.println(pregunta.get(0));// pinta solo el encunciado de una pregunta al azar
             pregunta.remove(0);// borra el enunciado para luego después solo desordenar las opciones (A,B,C,D)
@@ -338,10 +347,8 @@ public class Preguntas {
             
             for (String i : pregunta ){// pinta las preguntas aun en orden
                 System.out.println(i);
-            }            
-            
+            } 
             Collections.shuffle(pregunta); // desordena las respuestas         
-                                    
             for (String i : pregunta) {// pinta las posibles opciones desordenadas y aginadas a (A,B,C,D)
                 System.out.println( opc + " - " + i );
                 letraRespuesta.put(i,opc);//lo introduce en un hash map para luego asignar la letra a la opcion correcta
@@ -359,8 +366,10 @@ public class Preguntas {
             
     
         }catch (FileNotFoundException | NumberFormatException | NoSuchElementException e ){
-            System.out.println("Error: "+ e);
+            e.printStackTrace();
+            ingles.close();
         }
+        ingles.close();
         return preguntaConLetra;
     }
 }

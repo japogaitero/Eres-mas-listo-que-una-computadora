@@ -16,9 +16,11 @@ public class Jugadores extends GestionJugadores{
     private int puntosPartida;
     private int puntosTotal;
     private boolean humano;
+    private boolean exists = false;
     //private String expresion="^Cpu\\d*$";
 
     public Jugadores() {
+        this.exists = false;
     }
 
     
@@ -31,11 +33,12 @@ public class Jugadores extends GestionJugadores{
         this.puntosPartida = 0;
         this.puntosTotal = 0;
         this.humano = true;
+        this.exists = true;
         
-        /*if (usuario.equalsIgnoreCase(expresion)){
-            System.out.println("creamos un ordenadorrrrrrr");
-            this.humano = false;
-        }*/
+        if (usuario == null){
+            System.out.println("no noooombre");
+            this.exists = false;
+        }
         
     }
 
@@ -66,6 +69,11 @@ public class Jugadores extends GestionJugadores{
     public boolean isHumano() {
         return humano;
     }
+
+    public boolean isExists() {
+        return exists;
+    }
+    
 
     public void setHumano(boolean humano) {
         this.humano = humano;

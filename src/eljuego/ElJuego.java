@@ -33,7 +33,7 @@ public class ElJuego {
      */
     public static void main(String[] args) throws IOException, Exception {
         
-        Map <String, Integer> r = new HashMap();
+        
         int opcion;
         Scanner teclado = new Scanner (System.in);
         boolean continua;
@@ -56,16 +56,15 @@ public class ElJuego {
                         break;
                     case 2:
                         ranking();
-                        
+                        continua = true;
                         break;
                     case 3:
                         historico();
                         continua = true;
                         break;
                     case 4:
-                        GestionJugadores gestion = new GestionJugadores ();
-                        
-                        gestion.menuJugadores();
+                        //GestionJugadores gestion = new GestionJugadores ();                        
+                        GestionJugadores.menuJugadores();
                         continua = true;
                         break;
                     case 5:
@@ -91,13 +90,18 @@ public class ElJuego {
     }
     
     
-    
-    public static int aleatorio (int a, int b){  // devuelve un valor aleatorio entre a y b ambos incluidos
-        
+    // devuelve un valor aleatorio entre a y b ambos incluidos  
+    public static int aleatorio (int a, int b){        
         Random r = new Random();
-        int aleatorio = r.nextInt(b)+a;
-        
+        int aleatorio = r.nextInt(b)+a;        
         return aleatorio;
+    }
+    
+    public static void escribeParaContinuar (){
+        Scanner teclado = new Scanner (System.in);        
+        System.out.println("Presiona cualquier tecla para continuar");
+        teclado.nextLine();   
+        System.out.println("");
     }
     
     public static void menuPartida()throws Exception, IOException{
@@ -179,6 +183,7 @@ public class ElJuego {
         
         ArrayList <Jugadores> jugadoresPartida = new ArrayList <>();
         jugadoresPartida = pedirJugadores(nuevaPartida.getnJugadores());
+        //if (jugadoresPartida.isEmpty())
         nuevaPartida.setJugadoresPartida(jugadoresPartida);
         System.out.println("\nY los jugadores para esta partida son:");
         for (Jugadores i : nuevaPartida.getJugadoresPartida()){
@@ -266,7 +271,7 @@ public class ElJuego {
     }
     
     public  static void escriboFichero (String nuevoJugador, ArrayList <String> lineaDatosJugador) throws IOException{
-        
+        String expresion="^Cpu\\d*$";
         File f = new File ("src/eljuego/Jugadores.txt");
         
         
@@ -278,10 +283,6 @@ public class ElJuego {
             
             if (!nuevoJugador.isEmpty()){
                 escribo.write ("" + nuevoJugador + " 0 0 \n");
-            }
-            
-            for (String i : lineaDatosJugador){// Se vuelve a escribir el archivo Jugadores.txt con lo que contenia enteriormente
-                escribo.write ("" + i + "\n");
             }
             
             escribo.close();
@@ -308,14 +309,18 @@ public class ElJuego {
                 for (int j = 0 ; j < lineaDatosJugador.size() ; j++){
                     String jugadorArchivo = (lineaDatosJugador.get(j)).getNombre();
                     if (jugadorArchivo.equalsIgnoreCase(jugadorActualizado)){
-                        System.out.println("Se va a actualizar los datos del nombre " + jugadorArchivo);
-                        lineaDatosJugador.get(j).setPuntosTotal(puntuacionesNuevas.get(i).getPuntosTotal()+lineaDatosJugador.get(j).getPuntosTotal());                        
-                        
+                        //System.out.println("Se va a actualizar los datos del nombre " + jugadorArchivo);
+                        lineaDatosJugador.get(j).setPuntosTotal(puntuacionesNuevas.get(i).getPuntosTotal()+lineaDatosJugador.get(j).getPuntosTotal());  
                     }
                 }
             }
+          
+            
             for (Jugadores i : lineaDatosJugador){
-                archivoActualizado.add(i.toString());
+                if (i.isHumano() == true){
+                   archivoActualizado.add(i.toString()); 
+                }
+                
             }
             for (String i : archivoActualizado){
                 escribo.write ("" + i + "\n");
