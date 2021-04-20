@@ -59,11 +59,11 @@ public class ElJuego {
                         continua = true;
                         break;
                     case 3:
-                        historico();
+                        verHistorico();
                         continua = true;
                         break;
                     case 4:
-                        //GestionJugadores gestion = new GestionJugadores ();                        
+                        //GestionJugadores gestion = new GestionJugadores ();
                         GestionJugadores.menuJugadores();
                         continua = true;
                         break;
@@ -90,23 +90,24 @@ public class ElJuego {
     }
     
     
-    // devuelve un valor aleatorio entre a y b ambos incluidos  
-    public static int aleatorio (int a, int b){        
+    // devuelve un valor aleatorio entre a y b ambos incluidos
+    public static int aleatorio (int a, int b){
         Random r = new Random();
-        int aleatorio = r.nextInt(b)+a;        
+        int aleatorio = r.nextInt(b)+a;
         return aleatorio;
     }
     
-    public static void escribeParaContinuar (){
-        Scanner teclado = new Scanner (System.in);        
-        System.out.println("Presiona cualquier tecla para continuar");
-        teclado.nextLine();   
-        System.out.println("");
+    public static void escribeParaContinuar (String frase){
+        Scanner teclado = new Scanner (System.in);
+        System.out.println(frase);
+        teclado.nextLine();
+        
     }
     
     public static void menuPartida()throws Exception, IOException{
         Partida nuevaPartida = new Partida();
         int opcion;
+        int num = 1;
         boolean continua;
         Scanner teclado = new Scanner (System.in);
         
@@ -181,39 +182,17 @@ public class ElJuego {
             
         }while (continua);
         
-        ArrayList <Jugadores> jugadoresPartida = new ArrayList <>();
-        jugadoresPartida = pedirJugadores(nuevaPartida.getnJugadores());
-        //if (jugadoresPartida.isEmpty())
-        nuevaPartida.setJugadoresPartida(jugadoresPartida);
-        System.out.println("\nY los jugadores para esta partida son:");
-        for (Jugadores i : nuevaPartida.getJugadoresPartida()){
-            System.out.print(i.getNombre());
-            System.out.println("\t");
-        }
-        System.out.println("Vamos a decidir aleatoriamente el orden de los jugadores...");
+        nuevaPartida = Partida.ordenJugadores(nuevaPartida);
         
-        Collections.shuffle(nuevaPartida.getJugadoresPartida());
-        System.out.println("\nEl orden de los jugadores para responder es:");
-        for (Jugadores i : nuevaPartida.getJugadoresPartida()){
-            System.out.print(i.getNombre());
-            System.out.println("\t");
-        }
         ArrayList <Jugadores> jugadoresActualizados;
         jugadoresActualizados = jugandoPartida(nuevaPartida.getJugadoresPartida(), nuevaPartida.getnRondas());
-        ArrayList <String> puntuacionesNuevas = new ArrayList();
-        
-        for (Jugadores i : jugadoresActualizados){
-            puntuacionesNuevas.add(i.toString());
-        }
         
         actualizoFichero(jugadoresActualizados);
     }
     
-    public  static ArrayList<String> lineaDatosJugador(){
-        
+    public  static ArrayList<String> lineaDatosJugador(){        
         String linea;
-        ArrayList<String> lineaDatosJugador = new ArrayList<>();
-        
+        ArrayList<String> lineaDatosJugador = new ArrayList<>();        
         try{
             File lectura1 = new File ("src/eljuego/Jugadores.txt");
             Scanner archivoLeo = new Scanner(lectura1);
@@ -234,37 +213,33 @@ public class ElJuego {
     }
     
     public static ArrayList<Jugadores> jugadoresEnArchivo (ArrayList <String> lineaDatosJugador){
-        
         String[] parts;
         String nombreJugador;
         String expresion="^Cpu\\d*$";
         int puntosPartida;
         int puntosTotal;
-        
-        
+        Jugadores nuevo;
         ArrayList <Jugadores> arrayJugadores = new ArrayList <> ();
         
         if (!lineaDatosJugador.isEmpty()){
-        try{
-            for (String i : lineaDatosJugador){
-                parts =i.split(" ");
-                nombreJugador = parts[0].toLowerCase();
-                nombreJugador =  nombreJugador.toUpperCase().charAt(0) + nombreJugador.substring(1, nombreJugador.length()).toLowerCase();
-                puntosPartida = Integer.valueOf(parts[1]);
-                puntosTotal = Integer.valueOf(parts[2]);
-                
-                
-                Jugadores nuevo = new Jugadores(nombreJugador);
-                nuevo.setPuntosPartida(puntosPartida);
-                nuevo.setPuntosTotal(puntosTotal);
-                if (nombreJugador.matches(expresion) || nombreJugador.equalsIgnoreCase ("Cpu") ){
-                    nuevo.setHumano(false);                    
+            try{
+                for (String i : lineaDatosJugador){
+                    parts =i.split(" ");
+                    nombreJugador = parts[0];
+                    puntosPartida = Integer.valueOf(parts[1]);
+                    puntosTotal = Integer.valueOf(parts[2]);
+                    
+                    nuevo = new Jugadores(nombreJugador);
+                    nuevo.setPuntosPartida(puntosPartida);
+                    nuevo.setPuntosTotal(puntosTotal);
+                    if (nombreJugador.matches(expresion) || nombreJugador.equalsIgnoreCase ("Cpu") ){
+                        nuevo.setHumano(false);
+                    }
+                    arrayJugadores.add(nuevo);
                 }
-                arrayJugadores.add(nuevo);
+            }catch (ArrayIndexOutOfBoundsException e ){
+                System.out.println("Error: "+ e);
             }
-        }catch (ArrayIndexOutOfBoundsException e ){
-            System.out.println("Error: "+ e);
-        }
         }
         return arrayJugadores;
         
@@ -274,19 +249,17 @@ public class ElJuego {
         String expresion="^Cpu\\d*$";
         File f = new File ("src/eljuego/Jugadores.txt");
         
-        
         try{
+            //if (!lineaDatosJugador.isEmpty()){
+                FileWriter escribo = new FileWriter (f);
+                if (!nuevoJugador.isEmpty()){
+                    escribo.write ("" + nuevoJugador + " 0 0 \n");
+                }
+                for (String i : lineaDatosJugador){
+                    escribo.write ("" + i + "\n");
+                }
+                escribo.close();
             
-            if (!lineaDatosJugador.isEmpty()){
-            FileWriter escribo = new FileWriter (f);
-            
-            
-            if (!nuevoJugador.isEmpty()){
-                escribo.write ("" + nuevoJugador + " 0 0 \n");
-            }
-            
-            escribo.close();
-            }
         }catch (IOException e ){
             System.out.println("Error: "+ e);
         }
@@ -294,55 +267,50 @@ public class ElJuego {
     }
     
     public static void actualizoFichero(ArrayList <Jugadores> puntuacionesNuevas) throws IOException{
+        String jugadorArchivo;
+        String jugadorActualizado;
         ArrayList<Jugadores> lineaDatosJugador = new ArrayList();
         ArrayList<String> archivoActualizado = new ArrayList();
         
         if (!puntuacionesNuevas.isEmpty()){
-        
-        try{
-            lineaDatosJugador = jugadoresEnArchivo(lineaDatosJugador());
-            File f = new File ("src/eljuego/Jugadores.txt");
-            FileWriter escribo = new FileWriter (f);
-            
-            for (int i = 0 ; i < puntuacionesNuevas.size() ; i++){ // Se comprueba que el nuevo nombre no esta ya en el arrayList
-                String jugadorActualizado = (puntuacionesNuevas.get(i)).getNombre();
-                for (int j = 0 ; j < lineaDatosJugador.size() ; j++){
-                    String jugadorArchivo = (lineaDatosJugador.get(j)).getNombre();
-                    if (jugadorArchivo.equalsIgnoreCase(jugadorActualizado)){
-                        //System.out.println("Se va a actualizar los datos del nombre " + jugadorArchivo);
-                        lineaDatosJugador.get(j).setPuntosTotal(puntuacionesNuevas.get(i).getPuntosTotal()+lineaDatosJugador.get(j).getPuntosTotal());  
+            try{
+                lineaDatosJugador = jugadoresEnArchivo(lineaDatosJugador());
+                File f = new File ("src/eljuego/Jugadores.txt");
+                FileWriter escribo = new FileWriter (f);
+                
+                for (int i = 0 ; i < puntuacionesNuevas.size() ; i++){ // Se comprueba que el nuevo nombre no esta ya en el arrayList
+                    jugadorActualizado = (puntuacionesNuevas.get(i)).getNombre();
+                    for (int j = 0 ; j < lineaDatosJugador.size() ; j++){
+                        jugadorArchivo = (lineaDatosJugador.get(j)).getNombre();
+                        if (jugadorArchivo.equalsIgnoreCase(jugadorActualizado)){
+                            //System.out.println("Se va a actualizar los datos del nombre " + jugadorArchivo);
+                            lineaDatosJugador.get(j).setPuntosTotal(puntuacionesNuevas.get(i).getPuntosTotal()+lineaDatosJugador.get(j).getPuntosTotal());
+                        }
                     }
                 }
-            }
-          
-            
-            for (Jugadores i : lineaDatosJugador){
-                if (i.isHumano() == true){
-                   archivoActualizado.add(i.toString()); 
+                for (Jugadores i : lineaDatosJugador){
+                    if (i.isHumano() == true){
+                        archivoActualizado.add(i.toString());
+                    }
                 }
+                for (String i : archivoActualizado){
+                    escribo.write ("" + i + "\n");
+                }
+                escribo.close();
                 
+            }catch (IOException e ){
+                System.out.println("Error: "+ e);
             }
-            for (String i : archivoActualizado){
-                escribo.write ("" + i + "\n");
-            }
-            escribo.close();
-            
-        }catch (IOException e ){
-            System.out.println("Error: "+ e);
-        }
         }
     }
     
-    public static void historico(){        
-        
+    public static void verHistorico(){
         String linea;
         ArrayList<String> historico = new ArrayList<>();
         
         try{
             File lectura1 = new File ("src/eljuego/historico.txt");
             Scanner archivoLeo = new Scanner(lectura1);
-            
-            
             while (archivoLeo.hasNext()){
                 linea = archivoLeo.nextLine();
                 if (!linea.isEmpty()){
@@ -351,39 +319,33 @@ public class ElJuego {
             }
             archivoLeo.close();
             Collections.reverse(historico);
-            
             for (String i : historico){
                 System.out.println(i);
             }
             
-            
         }catch (IOException e ){
             System.out.println("Error: "+ e);
         }
-        
     }
     
     public static void actualizoHistorico(String resultados){
-        
         String linea;
         ArrayList<String> historico = new ArrayList<>();
         
         try{
             File lectura1 = new File ("src/eljuego/historico.txt");
-            Scanner archivoLeo = new Scanner(lectura1);           
-            
+            Scanner archivoLeo = new Scanner(lectura1);
             while (archivoLeo.hasNext()){
                 linea = archivoLeo.nextLine();
                 if (!linea.isEmpty()){
                     historico.add(linea);
                 }
             }
-            archivoLeo.close();            
+            archivoLeo.close();
             FileWriter actualizoHistorico = new FileWriter(lectura1);
-            
             actualizoHistorico.write ("" + resultados + "\n");
             
-            for (String i : historico){// Se vuelve a escribir el archivo Jugadores.txt con lo que contenia enteriormente
+            for (String i : historico){// Se vuelve a escribir el archivo Historico.txt con lo que contenia enteriormente
                 actualizoHistorico.write ("" + i + "\n");
             }
             actualizoHistorico.close();
@@ -394,34 +356,26 @@ public class ElJuego {
     }
     
     public static void ranking(){
-        
         ArrayList <Jugadores> arrayJugadores = new ArrayList<>();
-        Map <String, Integer > Ranking = new HashMap();
-        arrayJugadores = jugadoresEnArchivo(lineaDatosJugador());
+        Map <String, Integer > rNombreyPuntos = new HashMap();
         String nombre;
-        String expresion="^Cpu\\d*$";
         int puntuacion;
         
-        TreeMap <Integer, String> h = new TreeMap(Comparator.reverseOrder());
-        
+        arrayJugadores = jugadoresEnArchivo(lineaDatosJugador());
         for (Jugadores i :arrayJugadores ){
-            if(!i.getNombre().matches(expresion)){
             nombre = i.getNombre();
             puntuacion = i.getPuntosTotal();
-            Ranking.put(nombre, puntuacion);
-            }
+            rNombreyPuntos.put(nombre, puntuacion);
         }
         
-        
-        Map<String, Integer> ordenadoPorPuntos = Ranking.entrySet()
+        Map<String, Integer> rankingOrdenado = rNombreyPuntos.entrySet()
                 .stream()
                 .sorted((Map.Entry.<String, Integer>comparingByValue().reversed()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
         
-        
-        for (String i : ordenadoPorPuntos.keySet()) {
-                System.out.println("Nombre: " + i + "\t\t\t Puntos totales: " + Ranking.get(i));
-            }
+        for (String i : rankingOrdenado.keySet()) {
+            System.out.println("Nombre: " + i + "\t\t" + "Puntos totales: " + rNombreyPuntos.get(i));
+        }
         
         
         

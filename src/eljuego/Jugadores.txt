@@ -1,16 +1,1 @@
-Kop 0 8
-Luisa 0 5
-Alberto 0 3
-Pitrilo 0 2
-Juiopse 0 0
-Saasfasf 0 0
-Asdkasfks 0 0
-Asfasf 0 0
-Asasgas 0 0
-Fito 0 8
-Giopet 0 3
-Rita 0 0
-Fernando 0 0
-Pedro 0 16
-Juan 0 10
-Alfonso 0 6
+Jaime 0 0 

@@ -1,25 +1,2 @@
-Juan 3 
-Juan 3 
-Juan 2 
-Cpu22 2 Cpu23 2 Cpu24 1 
-Kop 3 
-Kop 5 
-Cpu21 1 Alberto 3 Luisa 5 
-Pedro 8 
-Pedro 2 
-Pedro 3 
-Fito 8 
-Alfonso 3 
-Giopet 3 
-Jiop 3 
-Jose 6 
-Pedro 3 
-Victor 2 
-Cpu15 11 Cpu14 6 Cpu12 5 Cpu13 9 
-Cpu8 1 Cpu10 3 Cpu11 0 Cpu9 1 
-Cpu2 10 Cpu3 10 Cpu4 7 
-Cpu1 4 Juan 4 
-Peter 3 Juan 3 
-Juan 2 
-Victor 3 
-Victor 2 
+Juan 1 
+Jaime 2 Peter 3 
